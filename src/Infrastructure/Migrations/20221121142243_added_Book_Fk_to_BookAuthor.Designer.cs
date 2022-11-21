@@ -4,6 +4,7 @@ using Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221121142243_added_Book_Fk_to_BookAuthor")]
+    partial class addedBookFktoBookAuthor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,8 +34,7 @@ namespace Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AuthorName")
-                        .HasMaxLength(99)
-                        .HasColumnType("nvarchar(99)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
@@ -52,16 +54,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Authors");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AuthorName = "J. K. Rowling",
-                            CreatedBy = 1,
-                            CreatedDate = new DateTime(2022, 11, 21, 10, 23, 58, 50, DateTimeKind.Local).AddTicks(1919),
-                            Status = false
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Book", b =>
@@ -76,11 +68,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("BookName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar")
-                        .HasColumnName("Name")
-                        .HasColumnOrder(4);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
@@ -95,9 +83,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("IssueDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("IssuedDate")
-                        .HasColumnOrder(0);
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("IssueTo")
                         .HasColumnType("int");
@@ -116,7 +102,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Book");
+                    b.ToTable("Books");
                 });
 
             modelBuilder.Entity("Domain.Entities.BookAuthor", b =>
@@ -242,7 +228,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("GenreName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Status")

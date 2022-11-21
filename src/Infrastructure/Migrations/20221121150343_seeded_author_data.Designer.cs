@@ -4,6 +4,7 @@ using Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221121150343_seeded_author_data")]
+    partial class seededauthordata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,9 +43,6 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
                     b.Property<int?>("UpdatedBy")
                         .HasColumnType("int");
 
@@ -59,8 +59,7 @@ namespace Infrastructure.Migrations
                             Id = 1,
                             AuthorName = "J. K. Rowling",
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2022, 11, 21, 10, 23, 58, 50, DateTimeKind.Local).AddTicks(1919),
-                            Status = false
+                            CreatedDate = new DateTime(2022, 11, 21, 10, 3, 42, 904, DateTimeKind.Local).AddTicks(174)
                         });
                 });
 
