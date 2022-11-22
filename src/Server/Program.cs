@@ -1,3 +1,5 @@
+using Book.Application.Contracts.Repositories;
+using Book.Infrastructure.Repositories;
 using Book.Infrastructure.Seeders;
 using Book.Server.Extensions;
 using Book.Shared.Interfaces;
@@ -8,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddAndMigrateDb(connectionString);
 builder.Services.AddTransient<IDataSeeder, GenreDataSeeder>();
+builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
