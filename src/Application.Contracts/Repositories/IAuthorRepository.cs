@@ -1,11 +1,6 @@
-﻿using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Book.Domain.Entities;
 
-namespace Application.Contracts.Repositories
+namespace Book.Application.Contracts.Repositories
 {
     public interface IAuthorRepository : IRepository<Author>
     {

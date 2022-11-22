@@ -1,12 +1,7 @@
-﻿using Domain.Entities;
+﻿using Book.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Infrastructure.Contexts
+namespace Book.Infrastructure.Contexts
 {
     public class ApplicationDbContext: DbContext
     {
@@ -16,7 +11,7 @@ namespace Infrastructure.Contexts
         public DbSet<User> Users { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Genre> Genres { get; set; }
-        public DbSet<Book> Books { get; set; }
+        public DbSet<Book.Domain.Entities.Book> Books { get; set; }
         public DbSet<BookAuthor> BookAuthors { get; set; }
         public DbSet<BookGenre> BookGenres { get; set; }
         public DbSet<BookIssue> BookIssues { get; set; }
@@ -34,6 +29,7 @@ namespace Infrastructure.Contexts
                 .HasForeignKey(s => s.AuthorId)
                 .HasConstraintName("FK_BookAuthor_Author_Id");
 
+            // seed data
             modelBuilder.Entity<Author>().HasData(
                     new Author
                     {

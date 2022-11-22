@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Domain.Entities
+namespace Book.Domain.Entities
 {
     [Table("Book")]
     public class Book: BaseEntity<int>

@@ -1,11 +1,13 @@
+using Book.Infrastructure.Seeders;
 using Book.Server.Extensions;
-using Infrastructure.Contexts;
+using Book.Shared.Interfaces;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddAndMigrateDb(connectionString);
+builder.Services.AddTransient<IDataSeeder, GenreDataSeeder>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -25,5 +27,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.Seed();
 
 app.Run();
+

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Infrastructure.Migrations
+namespace Book.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class addedDataAnnotations : Migration

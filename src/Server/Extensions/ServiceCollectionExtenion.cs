@@ -1,4 +1,4 @@
-﻿using Infrastructure.Contexts;
+﻿using Book.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace Book.Server.Extensions

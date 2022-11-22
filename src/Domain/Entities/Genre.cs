@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Book.Domain.Entities
 {
     public class Genre : BaseEntity<int>
     {

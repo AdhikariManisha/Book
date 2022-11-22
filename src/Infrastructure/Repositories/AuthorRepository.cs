@@ -1,13 +1,8 @@
-﻿using Application.Contracts.Repositories;
-using Domain.Entities;
-using Infrastructure.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Book.Application.Contracts.Repositories;
+using Book.Domain.Entities;
+using Book.Infrastructure.Contexts;
 
-namespace Infrastructure.Repositories
+namespace Book.Infrastructure.Repositories
 {
     public class AuthorRepository : IAuthorRepository
     {
