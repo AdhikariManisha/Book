@@ -1,6 +1,7 @@
 ﻿using Book.Application.Contracts.Repositories;
 using Book.Domain.Entities;
 using Book.Infrastructure.Contexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace Book.Infrastructure.Repositories
 {
@@ -15,29 +16,56 @@ namespace Book.Infrastructure.Repositories
 
         public async Task<bool> CreateAsync(Author input)
         {
-            await context.AddAsync(input);
-            context.SaveChanges();
+            var authorExist = await context.Authors.AnyAsync(s => s.AuthorName == input.AuthorName);
+            if (authorExist) {
+                throw new InvalidOperationException("Author Already exists.");
+            }
+
+            await context.Authors.AddAsync(input);
+            await context.SaveChangesAsync();
+
             return true;
         }
 
-        public Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var authorExist = await context.Authors.AnyAsync(s => s.Id == id);
+            if (!authorExist)
+            {
+                throw new InvalidOperationException("Author does not exists.");
+            }
+
+            await context.Authors.Where(s => s.Id == id).ExecuteDeleteAsync();
+            await context.SaveChangesAsync();
+
+            return true;
         }
 
-        public Task<Author> GetAsync(int id)
+        public async Task<Author> GetAsync(int id)
         {
-            throw new NotImplementedException();
+            return await context.Authors.Where(s => s.Id == id).FirstOrDefaultAsync();
         }
 
-        public Task<List<Author>> GetListAsync()
+        public async Task<List<Author>> GetListAsync()
         {
-            throw new NotImplementedException();
+            return await context.Authors.ToListAsync();
         }
 
-        public Task<bool> UpdateAsync(int id, Author input)
+        public async  Task<bool> UpdateAsync(int id, Author input)
         {
-            throw new NotImplementedException();
+            var authorExist = await context.Authors.FirstOrDefaultAsync(s => s.Id == id);
+            if (authorExist == null)
+            {
+                throw new InvalidOperationException("Author does not exists.");
+            }
+
+            authorExist.AuthorName = input.AuthorName;
+            authorExist.Status = input.Status;
+
+            context.Authors.Update(authorExist);
+            await context.SaveChangesAsync();
+
+            return true;
         }
     }
 }
