@@ -2,7 +2,7 @@
 
 namespace Book.Application.Contracts.Repositories
 {
-    public interface IAuthorRepository : IRepository<Author>
+    public interface IAuthorRepository : IRepository<Author, int>
     {
     }
 }
