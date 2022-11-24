@@ -17,10 +17,12 @@ public class Repository<T, TId> : IRepository<T, TId> where T : BaseEntity<TId>
     {
         _applicationDbContext = applicationDbContext;
     }
+    public IQueryable<T> Entities => _applicationDbContext.Set<T>();
 
     public async Task<bool> CreateAsync(T input)
     {
         await _applicationDbContext.Set<T>().AddAsync(input);
+        await _applicationDbContext.SaveChangesAsync();
 
         return true;
     }
@@ -30,9 +32,10 @@ public class Repository<T, TId> : IRepository<T, TId> where T : BaseEntity<TId>
         var entity = await _applicationDbContext.Set<T>().FindAsync(id);
         if (entity == null)
         {
-            throw new Exception($"{nameof(T)} not found.");
+            throw new Exception($"{typeof(T).Name} not found.");
         }
         _applicationDbContext.Set<T>().Remove(entity);
+        await _applicationDbContext.SaveChangesAsync();
 
         return true;
     }
@@ -40,12 +43,14 @@ public class Repository<T, TId> : IRepository<T, TId> where T : BaseEntity<TId>
     public async Task<T> GetAsync(TId id)
     {
         var entity = await _applicationDbContext.Set<T>().FindAsync(id);
+
         return entity;
     }
 
     public async Task<List<T>> GetListAsync()
     {
         var entities = await _applicationDbContext.Set<T>().ToListAsync();
+
         return entities;
     }
 
@@ -54,9 +59,10 @@ public class Repository<T, TId> : IRepository<T, TId> where T : BaseEntity<TId>
         var entity = await _applicationDbContext.Set<T>().FindAsync(id);
         if (entity == null)
         {
-            throw new Exception($"{nameof(T)} not found.");
+            throw new Exception($"{typeof(T).Name} not found.");
         }
-        _applicationDbContext.Set<T>().Update(entity);
+        _applicationDbContext.Entry(entity).CurrentValues.SetValues(input);
+        await _applicationDbContext.SaveChangesAsync();
 
         return true;
     }

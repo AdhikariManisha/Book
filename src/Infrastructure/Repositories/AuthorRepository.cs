@@ -14,6 +14,8 @@ namespace Book.Infrastructure.Repositories
             this.context = context;
         }
 
+        public IQueryable<Author> Entities => this.context.Authors;
+
         public async Task<bool> CreateAsync(Author input)
         {
             var authorExist = await context.Authors.AnyAsync(s => s.AuthorName == input.AuthorName);

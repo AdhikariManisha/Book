@@ -2,6 +2,7 @@
 {
     public interface IRepository<TClass, TId>
     {
+        public IQueryable<TClass> Entities { get; }
         public Task<bool> CreateAsync(TClass input);
         public Task<bool> UpdateAsync(TId id, TClass input);
         public Task<bool> DeleteAsync(TId id);

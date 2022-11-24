@@ -20,6 +20,7 @@ public class AuthorController : ControllerBase
     public async Task<ActionResult> GetAsync(int id)
     {
         var author = await _authorRepository.GetAsync(id);
+
         return Ok(author);
     }
 
@@ -31,6 +32,7 @@ public class AuthorController : ControllerBase
     public async Task<ActionResult> GetListAsync()
     {
         var authors = await _authorRepository.GetListAsync();
+
         return Ok(authors);
     }
 
@@ -38,6 +40,7 @@ public class AuthorController : ControllerBase
     public async Task<ActionResult> CreateAsync(Author input)
     {
         var taskCompleted = await _authorRepository.CreateAsync(input);
+
         return Ok(taskCompleted);
     }
 
@@ -45,6 +48,7 @@ public class AuthorController : ControllerBase
     public async Task<ActionResult> DeleteAsync(int id)
     {
         var taskCompleted = await _authorRepository.DeleteAsync(id);
+
         return Ok(taskCompleted);
     }
 
@@ -52,6 +56,7 @@ public class AuthorController : ControllerBase
     public async Task<ActionResult> UpdateAsync(int id, Author input)
     {
         var taskCompleted = await _authorRepository.UpdateAsync(id, input);
+
         return Ok(taskCompleted);
     }
 }
