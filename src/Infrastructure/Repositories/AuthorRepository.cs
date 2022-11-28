@@ -29,6 +29,11 @@ namespace Book.Infrastructure.Repositories
             return true;
         }
 
+        public Task CreateManyAsync(IEnumerable<Author> entities)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<bool> DeleteAsync(int id)
         {
             var authorExist = await context.Authors.AnyAsync(s => s.Id == id);
@@ -41,6 +46,11 @@ namespace Book.Infrastructure.Repositories
             await context.SaveChangesAsync();
 
             return true;
+        }
+
+        public Task DeleteManyAsync(IEnumerable<Author> entities)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<Author> GetAsync(int id)
@@ -68,6 +78,11 @@ namespace Book.Infrastructure.Repositories
             await context.SaveChangesAsync();
 
             return true;
+        }
+
+        public Task UpdateManyAsync(IEnumerable<Author> entities)
+        {
+            throw new NotImplementedException();
         }
     }
 }

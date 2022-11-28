@@ -1,3 +1,4 @@
+using Book.Application;
 using Book.Application.Contracts.Repositories;
 using Book.Infrastructure.Repositories;
 using Book.Infrastructure.Seeders;
@@ -20,6 +21,7 @@ builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 {
     builder.WithOrigins(@"http://127.0.0.1:5500").AllowAnyMethod().AllowAnyHeader();
 }));
+builder.Services.AddAutoMapper(typeof(BookApplicationAutoMapperProfile));
 
 var app = builder.Build();
 
