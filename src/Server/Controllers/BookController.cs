@@ -24,7 +24,7 @@ public class BookController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult> GetAsync(int id)
     {
-        var dto = _bookService.GetAsync(id);
+        var dto = await _bookService.GetAsync(id);
 
         return Ok(dto);
     }

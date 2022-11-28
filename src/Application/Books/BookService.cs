@@ -97,7 +97,7 @@ public class BookService : IBookService
 
         #region BookAuthor
         var authors = await _authorRepository.GetListAsync();
-        var bookAuthors = _bookAuthorRepository.Entities.Where(s => s.BookId == id).AsEnumerable();
+        var bookAuthors = await _bookAuthorRepository.Entities.Where(s => s.BookId == id).ToListAsync();
         var bookAuthorDtos = (from ba in bookAuthors
                               join a in authors on ba.AuthorId equals a.Id
                               select new BookAuthorDto
@@ -106,12 +106,15 @@ public class BookService : IBookService
                                   AuthorId = ba.AuthorId,
                                   AuthorName = a.AuthorName
                               }).ToList();
-        dto.Authors = bookAuthorDtos;
+
+        if (bookAuthorDtos.Count() > 0) { 
+            dto.Authors = bookAuthorDtos;
+        }
         #endregion
 
         #region BookGenre
         var genres = await _genreRepository.GetListAsync();
-        var bookGenres = _bookGenreRepository.Entities.Where(s => s.BookId == id).AsEnumerable();
+        var bookGenres = await _bookGenreRepository.Entities.Where(s => s.BookId == id).ToListAsync();
         var bookGenereDtos = (from ba in bookGenres
                               join g in genres on ba.GenreId equals g.Id
                               select new BookGenreDto
@@ -120,8 +123,13 @@ public class BookService : IBookService
                                   GenreId = ba.GenreId,
                                   GenreName = g.GenreName
                               }).ToList();
-        dto.Genres = bookGenereDtos;
+
+        if (bookGenereDtos.Count() > 0)
+        {
+            dto.Genres = bookGenereDtos;
+        }
         #endregion
+
         return dto;
     }
 
