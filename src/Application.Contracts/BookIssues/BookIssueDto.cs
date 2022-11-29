@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Book.Application.Contracts.Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Book.Application.Contracts.BookIssues;
-public class BookIssueDto
+public class BookIssueDto: BaseEntityDto<int>
 {
     public int BookId { get; set; }
     public DateTime IssueDate { get; set; }

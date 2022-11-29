@@ -5,16 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Book.Domain.Entities;
-public abstract class AuditableEntity
+namespace Book.Application.Contracts.Services;
+public abstract class AuditableEntityDto
 {
-    public DateTime CreatedDate { get; set; }
+    public DateTime? CreatedDate { get; set; }
     public int? CreatedBy { get; set; }
-    [ForeignKey("CreatedBy")]
-    public virtual User? CreatedByUser { get; set; }
     public DateTime? UpdatedDate { get; set; }
     public int? UpdatedBy { get; set; }
-
-    [ForeignKey("UpdatedBy")]
-    public virtual User? UpdatedByUser { get; set; }
 }

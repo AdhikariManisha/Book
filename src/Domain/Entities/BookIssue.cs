@@ -9,6 +9,10 @@ namespace Book.Domain.Entities
 {
     public class BookIssue: BaseEntity<int>
     {
+        public BookIssue()
+        {
+        }
+
         public int BookId { get; set; }
         [ForeignKey("BookId")]
         public virtual Book Book { get; set; }

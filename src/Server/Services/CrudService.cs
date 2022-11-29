@@ -40,6 +40,7 @@ public class CrudService<T, TId, TCreateUpdateDto, TDto> : ControllerBase
     {
         var entities = await Repository.GetListAsync();
         var dtos = _mapper.Map<List<TDto>>(entities);
+
         return Ok(dtos);
     }
 

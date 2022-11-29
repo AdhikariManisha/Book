@@ -17,5 +17,6 @@ public class BookApplicationAutoMapperProfile: Profile
 
         CreateMap<BookIssue, BookIssueDto>();
         CreateMap<CreateUpdateBookIssueDto, BookIssue>();
+        CreateMap<ReturnBookIssueDto, BookIssue>();
     }
 }
