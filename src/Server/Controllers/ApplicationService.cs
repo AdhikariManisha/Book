@@ -7,8 +7,7 @@ namespace Book.Server.Controllers;
 
 [ApiController]
 [Route("/api/[Controller]")]
-public class ApplicationService<T, TId> : ControllerBase
-{
+public class ApplicationService<T, TId> : ControllerBase { 
     protected readonly IRepository<T, TId> Repository;
 
     public ApplicationService(IRepository<T, TId> repository)

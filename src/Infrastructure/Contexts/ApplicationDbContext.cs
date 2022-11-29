@@ -51,7 +51,7 @@ namespace Book.Infrastructure.Contexts
                     {
                         Id = 1,
                         AuthorName = "J. K. Rowling",
-                        CreatedBy = 1,
+                        //CreatedBy = 1,
                         CreatedDate = DateTime.Now,
                     }
                 );
