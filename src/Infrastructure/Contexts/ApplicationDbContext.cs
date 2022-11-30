@@ -15,6 +15,7 @@ namespace Book.Infrastructure.Contexts
         public DbSet<BookAuthor> BookAuthors { get; set; }
         public DbSet<BookGenre> BookGenres { get; set; }
         public DbSet<BookIssue> BookIssues { get; set; }
+        public DbSet<Department> Departments { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

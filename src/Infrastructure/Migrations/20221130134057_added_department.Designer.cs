@@ -4,6 +4,7 @@ using Book.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Book.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221130134057_added_department")]
+    partial class addeddepartment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,7 +65,7 @@ namespace Book.Infrastructure.Migrations
                         {
                             Id = 1,
                             AuthorName = "J. K. Rowling",
-                            CreatedDate = new DateTime(2022, 11, 30, 8, 43, 44, 465, DateTimeKind.Local).AddTicks(6944),
+                            CreatedDate = new DateTime(2022, 11, 30, 8, 40, 56, 805, DateTimeKind.Local).AddTicks(5760),
                             Status = false
                         });
                 });
@@ -248,42 +251,6 @@ namespace Book.Infrastructure.Migrations
                     b.HasIndex("UpdatedBy");
 
                     b.ToTable("BookIssues");
-                });
-
-            modelBuilder.Entity("Book.Domain.Entities.Department", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DepartmentName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Faculty")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedBy");
-
-                    b.HasIndex("UpdatedBy");
-
-                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("Book.Domain.Entities.Genre", b =>
@@ -474,21 +441,6 @@ namespace Book.Infrastructure.Migrations
                     b.Navigation("IssueToUser");
 
                     b.Navigation("ReturnByUser");
-
-                    b.Navigation("UpdatedByUser");
-                });
-
-            modelBuilder.Entity("Book.Domain.Entities.Department", b =>
-                {
-                    b.HasOne("Book.Domain.Entities.User", "CreatedByUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedBy");
-
-                    b.HasOne("Book.Domain.Entities.User", "UpdatedByUser")
-                        .WithMany()
-                        .HasForeignKey("UpdatedBy");
-
-                    b.Navigation("CreatedByUser");
 
                     b.Navigation("UpdatedByUser");
                 });

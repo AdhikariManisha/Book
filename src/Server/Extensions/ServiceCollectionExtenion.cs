@@ -10,13 +10,6 @@ namespace Book.Server.Extensions
 
             servics.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString, e => e.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
-            using var scope = servics.BuildServiceProvider().CreateScope();
-            var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
-
-            if (dbContext?.Database.GetMigrations().Count() > 0) { 
-                dbContext.Database.Migrate();   
-            }
-
             return servics;
         }
     }
