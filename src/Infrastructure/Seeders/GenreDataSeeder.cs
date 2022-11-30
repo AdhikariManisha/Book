@@ -19,6 +19,8 @@ public class GenreDataSeeder : IDataSeeder
                                         "Drama",
                                         "Fantasy",
                                         "Adventure",
+                                        "Romance",
+                                        "Action"
                                     };
 
         await AddGenreAsync(genres);

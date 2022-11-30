@@ -1,4 +1,6 @@
 ﻿using Book.DbMigrator;
+using Book.Infrastructure.Seeders;
+using Book.Shared.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -15,6 +17,7 @@ class Program
     Host.CreateDefaultBuilder(args)
         .ConfigureServices((hostBuilderContext, services) => {
             services.AddAndMigrateDb(hostBuilderContext.Configuration["ConnectionStrings:DefaultConnection"]);
+            services.AddDataSeeders();
             services.AddHostedService<DbMigratorHostedService>();
         });
 
