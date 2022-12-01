@@ -48,8 +48,8 @@ public class CrudService<T, TId, TCreateUpdateDto, TDto> : ControllerBase
     public virtual async Task<ActionResult> CreateAsync(TCreateUpdateDto dto)
     {
         var input = _mapper.Map<T>(dto);
-        bool taskCompleted = await Repository.CreateAsync(input);
-        return Ok(taskCompleted);
+        await Repository.CreateAsync(input);
+        return Ok(true);
     }
     [HttpPut("{id}")]
 
@@ -57,15 +57,15 @@ public class CrudService<T, TId, TCreateUpdateDto, TDto> : ControllerBase
     {
         var entity = await Repository.GetAsync(id);
         _mapper.Map(dto, entity);
-        var taskCompleted = await Repository.UpdateAsync(id, entity);
+        await Repository.UpdateAsync(id, entity);
 
-        return Ok(taskCompleted);
+        return Ok(true);
     }
 
     [HttpDelete("{id}")]
     public virtual async Task<ActionResult> DeleteAsync(TId id)
     {
-        var taskCompleted = await Repository.DeleteAsync(id);
-        return Ok(taskCompleted);
+        await Repository.DeleteAsync(id);
+        return Ok(true);
     }
 }

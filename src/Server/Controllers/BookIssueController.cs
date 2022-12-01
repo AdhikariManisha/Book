@@ -82,8 +82,8 @@ public class BookIssueController : CrudService<BookIssue, int, CreateUpdateBookI
 
         var entity = await Repository.GetAsync(id);
         _mapper.Map(dto, entity);
-        var taskCompleted = await Repository.UpdateAsync(id, entity);
+        await Repository.UpdateAsync(id, entity);
 
-        return Ok(taskCompleted);
+        return Ok(true);
     }
 }

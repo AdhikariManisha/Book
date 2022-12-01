@@ -45,7 +45,7 @@ public class BookService : IBookService
         }
 
         var input = _mapper.Map<Domain.Entities.Book>(dto);
-        bool taskCompleted = await _bookRepository.CreateAsync(input);
+        await _bookRepository.CreateAsync(input);
 
         var bookId = await _bookRepository.Entities.Where(s => s.BookName == dto.BookName).Select(s => s.Id).FirstOrDefaultAsync();
 
@@ -81,13 +81,13 @@ public class BookService : IBookService
         }
         #endregion
 
-        return taskCompleted;
+        return true;
     }
 
     public async Task<bool> DeleteAsync(int id)
     {
-        var taskCompleted = await _bookRepository.DeleteAsync(id);
-        return taskCompleted;
+        await _bookRepository.DeleteAsync(id);
+        return true;
     }
 
     public async Task<BookDto> GetAsync(int id)
@@ -158,7 +158,7 @@ public class BookService : IBookService
         }
         bookExist.BookName = dto.BookName;
 
-        bool taskCompleted = await _bookRepository.UpdateAsync(id, bookExist);
+        await _bookRepository.UpdateAsync(id, bookExist);
 
         #region BookAuthor
         // delete existing bookauthors
@@ -200,6 +200,6 @@ public class BookService : IBookService
         }
         #endregion
 
-        return taskCompleted;
+        return true;
     }
 }

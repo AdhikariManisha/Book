@@ -16,7 +16,7 @@ namespace Book.Infrastructure.Repositories
 
         public IQueryable<Author> Entities => this.context.Authors;
 
-        public async Task<bool> CreateAsync(Author input)
+        public async Task<Author> CreateAsync(Author input)
         {
             var authorExist = await context.Authors.AnyAsync(s => s.AuthorName == input.AuthorName);
             if (authorExist) {
@@ -26,7 +26,7 @@ namespace Book.Infrastructure.Repositories
             await context.Authors.AddAsync(input);
             await context.SaveChangesAsync();
 
-            return true;
+            return input;
         }
 
         public Task CreateManyAsync(IEnumerable<Author> entities)
@@ -34,7 +34,7 @@ namespace Book.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             var authorExist = await context.Authors.AnyAsync(s => s.Id == id);
             if (!authorExist)
@@ -44,8 +44,6 @@ namespace Book.Infrastructure.Repositories
 
             await context.Authors.Where(s => s.Id == id).ExecuteDeleteAsync();
             await context.SaveChangesAsync();
-
-            return true;
         }
 
         public Task DeleteManyAsync(IEnumerable<Author> entities)
@@ -63,7 +61,7 @@ namespace Book.Infrastructure.Repositories
             return await context.Authors.ToListAsync();
         }
 
-        public async  Task<bool> UpdateAsync(int id, Author input)
+        public async  Task UpdateAsync(int id, Author input)
         {
             var authorExist = await context.Authors.FirstOrDefaultAsync(s => s.Id == id);
             if (authorExist == null)
@@ -76,8 +74,6 @@ namespace Book.Infrastructure.Repositories
 
             context.Authors.Update(authorExist);
             await context.SaveChangesAsync();
-
-            return true;
         }
 
         public Task UpdateManyAsync(IEnumerable<Author> entities)

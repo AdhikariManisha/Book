@@ -25,17 +25,17 @@ public class GenreController : ControllerBase
             throw new Exception("Genre Already exists.");
         }
 
-        bool taskCompleted = await _genreRepository.CreateAsync(input);
+        await _genreRepository.CreateAsync(input);
 
-        return Ok(taskCompleted);
+        return Ok(true);
     }
 
     [HttpPut("{id}")]
     public async Task<ActionResult> UpdateAsync(int id, Genre input)
     {
-      var taskCompleted = await _genreRepository.UpdateAsync(id, input);
+        await _genreRepository.UpdateAsync(id, input);
 
-        return Ok(taskCompleted);
+        return Ok(true);
     }
 
     [HttpGet("{id}")]
@@ -57,8 +57,8 @@ public class GenreController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteAsync(int id)
     {
-        var taskCompleted = await _genreRepository.DeleteAsync(id);
+        await _genreRepository.DeleteAsync(id);
 
-        return Ok(taskCompleted);
+        return Ok(true);
     }
 }

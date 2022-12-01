@@ -34,24 +34,24 @@ public class ApplicationService<T, TId> : ControllerBase {
     [HttpPost]
     public virtual async Task<ActionResult> CreateAsync(T input)
     {
-        bool taskCompleted = await Repository.CreateAsync(input);
+        await Repository.CreateAsync(input);
 
-        return Ok(taskCompleted);
+        return Ok(true);
     }
 
     [HttpPut("{id}")]
     public virtual async Task<ActionResult> UpdateAsync(TId id, T input)
     {
-        var taskCompleted = await Repository.UpdateAsync(id, input);
+        await Repository.UpdateAsync(id, input);
 
-        return Ok(taskCompleted);
+        return Ok(true);
     }
 
     [HttpDelete("{id}")]
     public virtual async Task<ActionResult> DeleteAsync(TId id)
     {
-        var taskCompleted = await Repository.DeleteAsync(id);
+        await Repository.DeleteAsync(id);
 
-        return Ok(taskCompleted);
+        return Ok(true);
     }
 }

@@ -47,16 +47,16 @@ public class AuthorController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteAsync(int id)
     {
-        var taskCompleted = await _authorRepository.DeleteAsync(id);
+       await _authorRepository.DeleteAsync(id);
 
-        return Ok(taskCompleted);
+        return Ok(true);
     }
 
     [HttpPut("{id}")]
     public async Task<ActionResult> UpdateAsync(int id, Author input)
     {
-        var taskCompleted = await _authorRepository.UpdateAsync(id, input);
+       await _authorRepository.UpdateAsync(id, input);
 
-        return Ok(taskCompleted);
+        return Ok(true);
     }
 }
