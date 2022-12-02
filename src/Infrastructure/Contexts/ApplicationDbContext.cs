@@ -1,4 +1,5 @@
 ﻿using Book.Domain.Entities;
+using Book.Shared.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Book.Infrastructure.Contexts

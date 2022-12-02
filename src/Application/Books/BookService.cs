@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Book.Application.Contracts.Services;
 
 namespace Book.Application.Books;
 public class BookService : IBookService
@@ -18,6 +19,7 @@ public class BookService : IBookService
     private readonly IRepository<BookGenre, int> _bookGenreRepository;
     private readonly IRepository<Genre, int> _genreRepository;
     private readonly IMapper _mapper;
+    private readonly IUnitOfWork<int> _unitOfWork;
 
     public BookService(
         IRepository<Domain.Entities.Book, int> bookRepository,
@@ -25,7 +27,8 @@ public class BookService : IBookService
         IRepository<Domain.Entities.Author, int> authorRepository,
         IRepository<Domain.Entities.BookGenre, int> bookGenreRepository,
         IRepository<Domain.Entities.Genre, int> genreRepository,
-        IMapper mapper
+        IMapper mapper,
+        IUnitOfWork<int> unitOfWork
         )
     {
         _bookRepository = bookRepository;
@@ -34,6 +37,7 @@ public class BookService : IBookService
         _bookGenreRepository = bookGenreRepository;
         _genreRepository = genreRepository;
         _mapper = mapper;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<bool> CreateAsync(CreateUpdateBookDto dto)
@@ -45,22 +49,23 @@ public class BookService : IBookService
         }
 
         var input = _mapper.Map<Domain.Entities.Book>(dto);
-        await _bookRepository.CreateAsync(input);
-
-        var bookId = await _bookRepository.Entities.Where(s => s.BookName == dto.BookName).Select(s => s.Id).FirstOrDefaultAsync();
+        using var uow = _unitOfWork;
+        var entity = await uow.Repository<Domain.Entities.Book>().CreateAsync(input);
+        //await _bookRepository.CreateAsync(input);
 
         #region BookAuthor
         foreach (var authorId in dto.Authors)
         {
-            var authorExists = await _authorRepository.Entities.AnyAsync(s => s.Id == authorId);
-            if (authorExists)
+            //var authorExists = await _authorRepository.Entities.AnyAsync(s => s.Id == authorId);
+            //if (authorExists)
             {
                 var bookAuthor = new BookAuthor
                 {
-                    BookId = bookId,
+                    Book = entity,
                     AuthorId = authorId
                 };
-                await _bookAuthorRepository.CreateAsync(bookAuthor);
+                await uow.Repository<Domain.Entities.BookAuthor>().CreateAsync(bookAuthor);
+                //await _bookAuthorRepository.CreateAsync(bookAuthor);
             }
         }
         #endregion
@@ -73,20 +78,30 @@ public class BookService : IBookService
             {
                 var bookGenre = new BookGenre
                 {
-                    BookId = bookId,
+                    Book = entity,
                     GenreId = genreId
                 };
-                await _bookGenreRepository.CreateAsync(bookGenre);
+                await uow.Repository<Domain.Entities.BookGenre>().CreateAsync(bookGenre);
+                //await _bookGenreRepository.CreateAsync(bookGenre);
             }
         }
         #endregion
-
+        await uow.CommitAsync();
         return true;
     }
 
     public async Task<bool> DeleteAsync(int id)
     {
-        await _bookRepository.DeleteAsync(id);
+        using var uow = _unitOfWork;
+        await uow.Repository<Domain.Entities.Book>().DeleteAsync(id);
+
+        var deleteBookAuthors = uow.Repository<Domain.Entities.BookAuthor>().Entities.Where(s => s.BookId == id);
+        await uow.Repository<Domain.Entities.BookAuthor>().DeleteManyAsync(deleteBookAuthors);
+
+        var deleteBookGenres = uow.Repository<Domain.Entities.BookGenre>().Entities.Where(s => s.BookId == id);
+        await uow.Repository<Domain.Entities.BookGenre>().DeleteManyAsync(deleteBookGenres);
+
+        await uow.CommitAsync();
         return true;
     }
 
@@ -107,7 +122,8 @@ public class BookService : IBookService
                                   AuthorName = a.AuthorName
                               }).ToList();
 
-        if (bookAuthorDtos.Count() > 0) { 
+        if (bookAuthorDtos.Count() > 0)
+        {
             dto.Authors = bookAuthorDtos;
         }
         #endregion

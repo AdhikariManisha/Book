@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -12,11 +12,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Application.Contracts\Book.Application.Contracts.csproj" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
+    <ProjectReference Include="..\Domain\Book.Domain.csproj" />
   </ItemGroup>
 
 </Project>

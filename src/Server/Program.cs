@@ -2,8 +2,10 @@ using Book.Application;
 using Book.Application.Books;
 using Book.Application.Contracts.Books;
 using Book.Application.Contracts.Repositories;
+using Book.Application.Contracts.Services;
 using Book.Infrastructure.Repositories;
 using Book.Infrastructure.Seeders;
+using Book.Infrastructure.Services;
 using Book.Server.Extensions;
 using Book.Shared.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddAndMigrateDb(connectionString);
-builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
 builder.Services.AddTransient(typeof(IRepository<,>), typeof(Repository<,>));
+builder.Services.AddTransient(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
 builder.Services.AddTransient<IBookService, BookService>();
 builder.Services.AddControllers();
 
@@ -41,7 +43,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-//app.Seed();
 
 app.Run();
 

@@ -1,4 +1,6 @@
-﻿namespace Book.Domain.Entities;
+﻿using Book.Shared.Entities;
+
+namespace Book.Domain.Entities;
 public class Department: BaseEntity<int>
 {
     public Department()

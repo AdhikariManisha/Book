@@ -8,9 +8,9 @@ namespace Book.Server.Controllers;
 
 public class AuthorController : ControllerBase
 {
-    private readonly IAuthorRepository _authorRepository;
+    private readonly IRepository<Author, int> _authorRepository;
 
-    public AuthorController(IAuthorRepository authorRepository)
+    public AuthorController(IRepository<Author, int> authorRepository)
     {
         _authorRepository = authorRepository;
 

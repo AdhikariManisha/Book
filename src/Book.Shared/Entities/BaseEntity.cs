@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Book.Domain.Entities
+namespace Book.Shared.Entities
 {
     public abstract class BaseEntity<TKey>: AuditableEntity
     {
