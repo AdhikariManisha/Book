@@ -2,6 +2,7 @@
 using Book.Application.Contracts.Books;
 using Book.Application.Contracts.Repositories;
 using Book.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,7 @@ namespace Book.Server.Controllers;
 
 [ApiController]
 [Route("/api/[Controller]")]
+//[Authorize()]
 public class BookController : ControllerBase
 {
     private readonly IBookService _bookService;

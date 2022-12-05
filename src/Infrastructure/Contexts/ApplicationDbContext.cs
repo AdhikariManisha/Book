@@ -58,6 +58,7 @@ namespace Book.Infrastructure.Contexts
                     }
                 );
 
+            modelBuilder.Entity<User>().HasIndex(s => s.UserName).IsUnique();
             base.OnModelCreating(modelBuilder);
         }
     }

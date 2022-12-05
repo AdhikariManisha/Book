@@ -24,6 +24,12 @@ public class UserController : ApplicationService<User, int>
         user.DOB = input.DOB;
         user.Address = input.Address;
 
+        // password
+        byte[] passwordBytes = System.Text.Encoding.ASCII.GetBytes(input.Password);
+        passwordBytes = new System.Security.Cryptography.SHA256Managed().ComputeHash(passwordBytes);
+        String passwordHash = System.Text.Encoding.ASCII.GetString(passwordBytes);
+        user.Password = passwordHash;
+
         return await base.UpdateAsync(id, user);
     }
 }
