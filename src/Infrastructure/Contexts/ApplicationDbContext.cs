@@ -1,15 +1,16 @@
 ﻿using Book.Domain.Entities;
+using Book.Domain.Entities.Identity;
 using Book.Shared.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Book.Infrastructure.Contexts
 {
-    public class ApplicationDbContext: DbContext
+    public class ApplicationDbContext: IdentityDbContext<BookUser, BookRole, int>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> option): base(option)
         { 
         }
-        public DbSet<User> Users { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Book.Domain.Entities.Book> Books { get; set; }
@@ -58,7 +59,6 @@ namespace Book.Infrastructure.Contexts
                     }
                 );
 
-            modelBuilder.Entity<User>().HasIndex(s => s.UserName).IsUnique();
             base.OnModelCreating(modelBuilder);
         }
     }

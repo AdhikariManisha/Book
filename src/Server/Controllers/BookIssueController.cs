@@ -2,6 +2,7 @@
 using Book.Application.Contracts.BookIssues;
 using Book.Application.Contracts.Repositories;
 using Book.Domain.Entities;
+using Book.Domain.Entities.Identity;
 using Book.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,13 +11,13 @@ namespace Book.Server.Controllers;
 public class BookIssueController : CrudService<BookIssue, int, CreateUpdateBookIssueDto, BookIssueDto>
 {
     private readonly IMapper _mapper;
-    private readonly IRepository<User, int> _userRepository;
+    private readonly IRepository<BookUser, int> _userRepository;
     private readonly IRepository<Domain.Entities.Book, int> _bookRepository;
 
     public BookIssueController(
         IRepository<BookIssue, int> repository, 
         IMapper mapper,
-        IRepository<User, int> userRepository,
+        IRepository<BookUser, int> userRepository,
         IRepository<Domain.Entities.Book, int> bookRepository
     ) : base(repository, mapper)
     {

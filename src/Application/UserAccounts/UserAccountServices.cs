@@ -1,6 +1,8 @@
 ﻿using Book.Application.Contracts.Repositories;
 using Book.Application.Contracts.UserAccounts;
 using Book.Domain.Entities;
+using Book.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,9 +13,9 @@ using System.Threading.Tasks;
 namespace Book.Application.UserAccounts;
 public class UserAccountServices : IUserAccountServices
 {
-    private readonly IRepository<User, int> _repository;
+    private readonly IRepository<IdentityUser, int> _repository;
 
-    public UserAccountServices(IRepository<User, int> repository)
+    public UserAccountServices(IRepository<IdentityUser, int> repository)
     {
         _repository = repository;
     }
@@ -40,7 +42,7 @@ public class UserAccountServices : IUserAccountServices
         passwordBytes = new System.Security.Cryptography.SHA256Managed().ComputeHash(passwordBytes);
         String passwordHash = System.Text.Encoding.ASCII.GetString(passwordBytes);
 
-        if (user.Password != passwordHash)
+        if (user.PasswordHash != passwordHash)
         {
             throw new Exception("Invalid Username/Password.");
         }
