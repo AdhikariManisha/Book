@@ -17,6 +17,7 @@ class Program
     Host.CreateDefaultBuilder(args)
         .ConfigureServices((hostBuilderContext, services) => {
             services.AddAndMigrateDb(hostBuilderContext.Configuration["ConnectionStrings:DefaultConnection"]);
+            services.AddIdentity();
             services.AddDataSeeders();
             services.AddHostedService<DbMigratorHostedService>();
         });

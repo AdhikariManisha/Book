@@ -2,6 +2,7 @@
 using Book.Application.Contracts.Repositories;
 using Book.Application.Contracts.Users;
 using Book.Domain.Entities.Identity;
+using Book.Shared.Constants;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -61,7 +62,8 @@ public class UserService : IUserService
             throw new Exception("User already exists");
         }
 
-        await _userManager.CreateAsync(user, dto.Password); ;
+        await _userManager.CreateAsync(user, dto.Password);
+        await _userManager.AddToRoleAsync(user, Roles.User.ToString());
 
         return true;
     }

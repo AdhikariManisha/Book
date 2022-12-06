@@ -1,4 +1,5 @@
-﻿using Book.Infrastructure.Contexts;
+﻿using Book.Domain.Entities.Identity;
+using Book.Infrastructure.Contexts;
 using Book.Infrastructure.Seeders;
 using Book.Shared.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,20 @@ namespace Book.DbMigrator
             }
 
             return services;
+        }
+        public static IServiceCollection AddIdentity(this IServiceCollection servics)
+        {
+            servics.AddIdentity<BookUser, BookRole>(options =>
+            {
+                options.Password.RequiredLength = 6;
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.User.RequireUniqueEmail = true;
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
+
+            return servics;
         }
     }
 }
