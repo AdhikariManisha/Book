@@ -3,8 +3,8 @@ using Book.Application.Books;
 using Book.Application.Contracts.Books;
 using Book.Application.Contracts.Repositories;
 using Book.Application.Contracts.Services;
-using Book.Application.Contracts.UserAccounts;
-using Book.Application.UserAccounts;
+using Book.Application.Contracts.Users;
+using Book.Application.Users;
 using Book.Infrastructure.Repositories;
 using Book.Infrastructure.Seeders;
 using Book.Infrastructure.Services;
@@ -24,7 +24,7 @@ builder.Services.AddIdentity();
 builder.Services.AddTransient(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddTransient(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
 builder.Services.AddTransient<IBookService, BookService>();
-builder.Services.AddTransient<IUserAccountServices, UserAccountServices> ();
+builder.Services.AddTransient<IUserService, UserService> ();
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
