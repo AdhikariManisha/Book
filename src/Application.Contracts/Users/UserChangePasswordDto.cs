@@ -2,4 +2,5 @@
 
 public class UserChangePasswordDto
 {
+    public string UserName { get; set; }
 }

@@ -11,7 +11,8 @@ public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
 
-    public UserController(IUserService userService) {
+    public UserController(IUserService userService)
+    {
         _userService = userService;
     }
     //[Authorize("Book.User.Login")]
@@ -28,9 +29,16 @@ public class UserController : ControllerBase
         return Ok();
     }
     [HttpGet]
-    public async Task<ActionResult> GetListAsync() {
+    public async Task<ActionResult> GetListAsync()
+    {
         var users = await _userService.GetListAsync();
         return Ok(users);
+    }
+    [HttpPost("change-password")]
+    public async Task<ActionResult> ChangePasswordAsync(UserChangePasswordDto dto)
+    {
+        var isSuccess = await _userService.ChangePasswordAsync(dto);
+        return Ok(isSuccess);
     }
 }
 

@@ -5,6 +5,7 @@ using Book.Domain.Entities;
 using Book.Domain.Entities.Identity;
 using Book.Server.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 
 namespace Book.Server.Controllers;
 
