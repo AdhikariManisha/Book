@@ -27,8 +27,7 @@ public class UserService : IUserService
     public async Task<bool> ChangePasswordAsync(UserChangePasswordDto dto)
     {
         var connectionString = _configuration.GetConnectionString("DefaultConnection");
-        //var sql = "select * from AspNetUsers where UserName = '" + dto.UserName + "'";
-        var sql = "exec";
+        var sql = "select * from AspNetUsers";
         using var conn = new SqlConnection(connectionString);
         var dtoUsers = (await conn.QueryAsync<UserDto>(sql)).ToList();
         return true;
