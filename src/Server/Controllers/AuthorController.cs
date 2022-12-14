@@ -1,5 +1,7 @@
 ﻿using Book.Application.Contracts.Repositories;
+using Book.Authors;
 using Book.Domain.Entities;
+using Book.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Book.Server.Controllers;
@@ -8,18 +10,17 @@ namespace Book.Server.Controllers;
 
 public class AuthorController : ControllerBase
 {
-    private readonly IRepository<Author, int> _authorRepository;
+    private readonly IAuthorRepository _dapperAuthorRepo;
 
-    public AuthorController(IRepository<Author, int> authorRepository)
+    public AuthorController(IAuthorRepository dapperAuthorRepo)
     {
-        _authorRepository = authorRepository;
-
+        _dapperAuthorRepo = dapperAuthorRepo;
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult> GetAsync(int id)
     {
-        var author = await _authorRepository.GetAsync(id);
+        var author = await _dapperAuthorRepo.GetAsync(id);
 
         return Ok(author);
     }
@@ -31,31 +32,31 @@ public class AuthorController : ControllerBase
     [HttpGet]
     public async Task<ActionResult> GetListAsync()
     {
-        var authors = await _authorRepository.GetListAsync();
+        var authors = await _dapperAuthorRepo.GetListAsync();
 
         return Ok(authors);
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateAsync(Author input)
+    public async Task<ActionResult> CreateAsync(CreateUpdateAuthorDto input)
     {
-        var taskCompleted = await _authorRepository.CreateAsync(input);
+        await _dapperAuthorRepo.CreateAsync(input);
 
-        return Ok(taskCompleted);
+        return Ok(true);
     }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteAsync(int id)
     {
-       await _authorRepository.DeleteAsync(id);
+        await _dapperAuthorRepo.DeleteAsync(id);
 
         return Ok(true);
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateAsync(int id, Author input)
+    public async Task<ActionResult> UpdateAsync(int id, CreateUpdateAuthorDto input)
     {
-       await _authorRepository.UpdateAsync(id, input);
+        await _dapperAuthorRepo.UpdateAsync(id, input);
 
         return Ok(true);
     }
