@@ -1,18 +1,32 @@
+using Book.Application;
+using Book.Application.Books;
+using Book.Application.Contracts.Books;
 using Book.Application.Contracts.Repositories;
+using Book.Application.Contracts.Services;
+using Book.Application.Contracts.Users;
+using Book.Application.Users;
 using Book.Infrastructure.Repositories;
 using Book.Infrastructure.Seeders;
+using Book.Infrastructure.Services;
 using Book.Server.Extensions;
 using Book.Shared.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddAutoMapper(typeof(BookApplicationAutoMapperProfile));
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie();
 builder.Services.AddAndMigrateDb(connectionString);
-builder.Services.AddTransient<IDataSeeder, GenreDataSeeder>();
-builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
+builder.Services.AddIdentity();
 builder.Services.AddTransient(typeof(IRepository<,>), typeof(Repository<,>));
+builder.Services.AddTransient(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+builder.Services.AddTransient<IBookService, BookService>();
+builder.Services.AddTransient<IUserService, UserService> ();
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -33,10 +47,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-//app.Seed();
 
 app.Run();
 

@@ -1,4 +1,5 @@
-﻿using Book.Infrastructure.Contexts;
+﻿using Book.Domain.Entities.Identity;
+using Book.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace Book.Server.Extensions
@@ -10,12 +11,19 @@ namespace Book.Server.Extensions
 
             servics.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString, e => e.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
-            using var scope = servics.BuildServiceProvider().CreateScope();
-            var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
-
-            if (dbContext?.Database.GetMigrations().Count() > 0) { 
-                dbContext.Database.Migrate();   
-            }
+            return servics;
+        }
+        public static IServiceCollection AddIdentity(this IServiceCollection servics)
+        {
+            servics.AddIdentity<BookUser, BookRole>(options =>
+            {
+                options.Password.RequiredLength = 6;
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.User.RequireUniqueEmail = true;
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
 
             return servics;
         }

@@ -1,20 +1,23 @@
 ﻿using Book.Domain.Entities;
+using Book.Domain.Entities.Identity;
+using Book.Shared.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Book.Infrastructure.Contexts
 {
-    public class ApplicationDbContext: DbContext
+    public class ApplicationDbContext: IdentityDbContext<BookUser, BookRole, int>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> option): base(option)
         { 
         }
-        public DbSet<User> Users { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Book.Domain.Entities.Book> Books { get; set; }
         public DbSet<BookAuthor> BookAuthors { get; set; }
         public DbSet<BookGenre> BookGenres { get; set; }
         public DbSet<BookIssue> BookIssues { get; set; }
+        public DbSet<Department> Departments { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
@@ -51,7 +54,7 @@ namespace Book.Infrastructure.Contexts
                     {
                         Id = 1,
                         AuthorName = "J. K. Rowling",
-                        CreatedBy = 1,
+                        //CreatedBy = 1,
                         CreatedDate = DateTime.Now,
                     }
                 );

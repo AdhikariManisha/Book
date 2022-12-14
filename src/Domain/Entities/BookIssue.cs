@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Book.Domain.Entities.Identity;
+using Book.Shared.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -9,12 +11,20 @@ namespace Book.Domain.Entities
 {
     public class BookIssue: BaseEntity<int>
     {
+        public BookIssue()
+        {
+        }
         public int BookId { get; set; }
-        public DateTime IssueDate { get; set; }
-        public int IssueTo { get; set; }
-        public DateTime? ReturnDate { get; set; }
-        public int? ReturnBy { get; set; }
         [ForeignKey("BookId")]
         public virtual Book Book { get; set; }
+        public DateTime IssueDate { get; set; }
+        public int IssueTo { get; set; }
+        [ForeignKey("IssueTo")]
+        public virtual BookUser IssueToUser { get; set; }
+        public DateTime? ReturnDate { get; set; }
+        public int? ReturnBy { get; set; }
+        [ForeignKey("ReturnBy")]
+        public virtual BookUser ReturnByUser { get; set; }
+
     }
 }
