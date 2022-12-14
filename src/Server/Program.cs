@@ -1,10 +1,13 @@
 using Book.Application;
 using Book.Application.Books;
+using Book.Application.Connections;
 using Book.Application.Contracts.Books;
+using Book.Application.Contracts.Connections;
 using Book.Application.Contracts.Repositories;
 using Book.Application.Contracts.Services;
 using Book.Application.Contracts.Users;
 using Book.Application.Users;
+using Book.Authors;
 using Book.Infrastructure.Repositories;
 using Book.Infrastructure.Seeders;
 using Book.Infrastructure.Services;
@@ -23,9 +26,11 @@ builder.Services.AddAndMigrateDb(connectionString);
 builder.Services.AddIdentity();
 builder.Services.AddTransient(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddTransient(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+builder.Services.AddTransient<IDbConnection, DbConnection>();
 builder.Services.AddTransient<IBookService, BookService>();
 builder.Services.AddTransient<IUserService, UserService> ();
 builder.Services.AddControllers();
+builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
