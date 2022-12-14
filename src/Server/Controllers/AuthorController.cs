@@ -40,7 +40,8 @@ public class AuthorController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> CreateAsync(CreateUpdateAuthorDto input)
     {
-        await _dapperAuthorRepo.CreateAsync(input);
+		// edited for merge conflict
+        var id = await _dapperAuthorRepo.CreateAsync(input);
 
         return Ok(true);
     }
