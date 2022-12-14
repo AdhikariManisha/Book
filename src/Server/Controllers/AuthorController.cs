@@ -10,17 +10,17 @@ namespace Book.Server.Controllers;
 
 public class AuthorController : ControllerBase
 {
-    private readonly IAuthorRepository _dapperAuthorRepo;
+    private readonly IAuthorService _authorService;
 
-    public AuthorController(IAuthorRepository dapperAuthorRepo)
+    public AuthorController(IAuthorService authorService)
     {
-        _dapperAuthorRepo = dapperAuthorRepo;
+        _authorService = authorService;
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult> GetAsync(int id)
     {
-        var author = await _dapperAuthorRepo.GetAsync(id);
+        var author = await _authorService.GetAsync(id);
 
         return Ok(author);
     }
@@ -32,7 +32,7 @@ public class AuthorController : ControllerBase
     [HttpGet]
     public async Task<ActionResult> GetListAsync()
     {
-        var authors = await _dapperAuthorRepo.GetListAsync();
+        var authors = await _authorService.GetListAsync();
 
         return Ok(authors);
     }
@@ -40,8 +40,7 @@ public class AuthorController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> CreateAsync(CreateUpdateAuthorDto input)
     {
-		// edited for merge conflict
-        var id = await _dapperAuthorRepo.CreateAsync(input);
+        await _authorService.CreateAsync(input);
 
         return Ok(true);
     }
@@ -49,15 +48,15 @@ public class AuthorController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteAsync(int id)
     {
-        await _dapperAuthorRepo.DeleteAsync(id);
+        await _authorService.DeleteAsync(id);
 
         return Ok(true);
     }
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateAsync(int id, CreateUpdateAuthorDto input)
+    [HttpPut]
+    public async Task<ActionResult> UpdateAsync(CreateUpdateAuthorDto input)
     {
-        await _dapperAuthorRepo.UpdateAsync(id, input);
+        await _authorService.UpdateAsync(input);
 
         return Ok(true);
     }

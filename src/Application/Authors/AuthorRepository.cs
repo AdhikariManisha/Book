@@ -16,11 +16,13 @@ public class AuthorRepository : IAuthorRepository
         _dbConnection = dbConnection;
     }
 
-    public async Task CreateAsync(CreateUpdateAuthorDto input)
+    public async Task<int> CreateAsync(CreateUpdateAuthorDto input)
     {
         var conn = _dbConnection.GetConnection();
-        var sql = "Insert into Authors(AuthorName, Status)values(@AuthorName, @Status)";
-        _ = await conn.ExecuteAsync(sql, new { input.AuthorName, input.Status });
+        var sql = "Insert into Authors(AuthorName, Status, CreatedDate) values(@AuthorName, @Status, GetDate());" +
+            " select SCOPE_IDENTITY();";
+        var id = await conn.ExecuteScalarAsync<int>(sql, new { input.AuthorName, input.Status });
+        return id;
     }
 
     public async Task DeleteAsync(int id)
@@ -38,6 +40,14 @@ public class AuthorRepository : IAuthorRepository
         return author.FirstOrDefault();
     }
 
+    public async Task<AuthorDto> GetByNameAsync(string name)
+    {
+        var conn = _dbConnection.GetConnection();
+        var sql = "select * from Authors where AuthorName = @AuthorName";
+        var author = await conn.QueryAsync<AuthorDto>(sql, new { AuthorName = name});
+        return author.FirstOrDefault();
+    }
+
     public async Task<List<AuthorDto>> GetListAsync()
     {
         var conn = _dbConnection.GetConnection();
@@ -46,10 +56,10 @@ public class AuthorRepository : IAuthorRepository
         return authors.ToList();        
     }
 
-    public async Task UpdateAsync(int id, CreateUpdateAuthorDto input)
+    public async Task UpdateAsync(CreateUpdateAuthorDto input)
     {
         var conn = _dbConnection.GetConnection();
-        var sql = "Update Authors set @AuthorName, @Status where Id = @Id";
-        _ = await conn.ExecuteAsync(sql, new { input, Id = id });        
+        var sql = "Update Authors set AuthorName=@AuthorName, Status=@Status, UpdatedDate=GetDate() where Id = @Id";
+        _ = await conn.ExecuteAsync(sql, input);        
     }
 }
