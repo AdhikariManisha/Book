@@ -12,4 +12,5 @@ public interface IBookService
     Task<BookDto> GetAsync(int id);
     Task<List<BookDto>> GetListAsync();
     Task<bool> UpdateAsync(int id, CreateUpdateBookDto dto);
+    Task<int> GetBookTotalCount();
 }

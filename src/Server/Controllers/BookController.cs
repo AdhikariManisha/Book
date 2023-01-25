@@ -62,4 +62,11 @@ public class BookController : ControllerBase
 
         return Ok(taskCompleted);
     }
+    [HttpGet("GetBookTotalCount")]
+    public async Task<ActionResult> GetBookTotalCount()
+    {
+        var books = await _bookService.GetBookTotalCount();
+
+        return Ok(books);
+    }
 }

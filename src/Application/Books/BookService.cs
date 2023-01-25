@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Book.Application.Contracts.Services;
+using Microsoft.Extensions.Configuration;
+using System.Data.SqlClient;
 
 namespace Book.Application.Books;
 public class BookService : IBookService
@@ -20,6 +22,7 @@ public class BookService : IBookService
     private readonly IRepository<Genre, int> _genreRepository;
     private readonly IMapper _mapper;
     private readonly IUnitOfWork<int> _unitOfWork;
+    private readonly IConfiguration _configuration;
 
     public BookService(
         IRepository<Domain.Entities.Book, int> bookRepository,
@@ -28,7 +31,8 @@ public class BookService : IBookService
         IRepository<Domain.Entities.BookGenre, int> bookGenreRepository,
         IRepository<Domain.Entities.Genre, int> genreRepository,
         IMapper mapper,
-        IUnitOfWork<int> unitOfWork
+        IUnitOfWork<int> unitOfWork,
+        IConfiguration configuration
         )
     {
         _bookRepository = bookRepository;
@@ -38,6 +42,7 @@ public class BookService : IBookService
         _genreRepository = genreRepository;
         _mapper = mapper;
         _unitOfWork = unitOfWork;
+        _configuration = configuration;
     }
 
     public async Task<bool> CreateAsync(CreateUpdateBookDto dto)
@@ -147,6 +152,29 @@ public class BookService : IBookService
         #endregion
 
         return dto;
+    }
+
+    public async Task<int> GetBookTotalCount()
+    {
+        var connectionString = _configuration.GetConnectionString("DefaultConnection");
+        var sql = "sp_GetBookTotalCount";
+
+        using var conn = new SqlConnection(connectionString);
+        await conn.OpenAsync();
+        using var cmd = new SqlCommand(sql, conn);
+        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+        SqlParameter outputParameter = new SqlParameter();
+        outputParameter.ParameterName = "@totalCount";
+        outputParameter.SqlDbType = System.Data.SqlDbType.Int;
+        outputParameter.Direction = System.Data.ParameterDirection.Output;
+
+        cmd.Parameters.Add(outputParameter);
+        cmd.Parameters.AddWithValue("@Id", 2);
+
+        await cmd.ExecuteNonQueryAsync();
+
+        return (int)outputParameter.Value;
     }
 
     public async Task<List<BookDto>> GetListAsync()
