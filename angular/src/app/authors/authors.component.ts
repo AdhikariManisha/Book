@@ -46,12 +46,7 @@ export class AuthorsComponent {
       this.form.reset();
       this.selected = {} as AuthorDto;
       this.buildForm();
-    },
-      (error) => {
-        if (error.error) {
-          this.toastr.error(error.error.message);
-        }
-      }
+    }
     );
   }
 

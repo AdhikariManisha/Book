@@ -1,5 +1,5 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -13,6 +13,7 @@ import { ToastrModule } from 'ngx-toastr';
 import {MatDialogRef, MatDialogModule} from '@angular/material/dialog'
 import{ MatButtonModule} from '@angular/material/button'
 import{ MatCardModule} from '@angular/material/card'
+import { GlobalErrorHandlerService } from './global-error-handler.service';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,7 @@ import{ MatCardModule} from '@angular/material/card'
     MatButtonModule,
     MatCardModule
   ],
-  providers: [HttpClient, AuthorService, ],
+  providers: [{provide: ErrorHandler, useClass: GlobalErrorHandlerService}, HttpClient, AuthorService ],
   bootstrap: [AppComponent],
   entryComponents:[ConfirmationDialog]
 })
