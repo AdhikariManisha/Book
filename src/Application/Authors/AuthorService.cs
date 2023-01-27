@@ -33,7 +33,7 @@ public class AuthorService : IAuthorService
         var authorExits = await _authorRepository.GetAsync(id);
         if (authorExits == null)
         {
-            throw new Exception("Author not found.");
+            throw new ValidationException("Author not found.");
         }
 
         await _authorRepository.DeleteAsync(id);
@@ -62,7 +62,7 @@ public class AuthorService : IAuthorService
     {
         var authorExits = await _authorRepository.GetAsync(input.Id);
         if (authorExits == null) {
-            throw new Exception("Author not found.");
+            throw new ValidationException("Author not found.");
         }
 
         bool isAuthorNameUpdated = authorExits.AuthorName?.ToLower() != input.AuthorName?.ToLower();
@@ -71,7 +71,7 @@ public class AuthorService : IAuthorService
             var dto = await _authorRepository.GetByNameAsync(input.AuthorName);
             if (dto != null) // find author by new author name
             {
-                throw new Exception("Author already Exits with that name.");
+                throw new ValidationException("Author already Exits with that name.");
             }
         }
 

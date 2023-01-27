@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { ConfirmationDialog } from '../confirmation-dialog/confirmation-dialog';
 import { AuthorService, } from './author.service';
 import { CreateUpdateAuthorDto, AuthorDto } from './model';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog'
 
 @Component({
   selector: 'app-authors',
@@ -13,8 +15,10 @@ export class AuthorsComponent {
   form: FormGroup = new FormGroup({});
   data: AuthorDto[] = [];
   selected = {} as AuthorDto;
+  dialogRef = {} as MatDialogRef<ConfirmationDialog>;
   constructor(private authorService: AuthorService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private dialog: MatDialog
   ) {
     this.buildForm();
     this.getList();
@@ -64,9 +68,18 @@ export class AuthorsComponent {
     });
   }
   delete(id?: number) {
-    this.authorService.delete(id as number).subscribe(d => {
-      this.toastr.success("Author deleted successfully", "Deleted", { positionClass: 'toast-top-right' });
-      this.getList();
+    this.dialogRef = this.dialog.open(ConfirmationDialog, {
+      disableClose: false
+    })
+    this.dialogRef.componentInstance.confirmMessage = 'Are you sure you want to delete this item?';
+    this.dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.authorService.delete(id as number).subscribe(d => {
+          this.toastr.success("Author deleted successfully", "Deleted", { positionClass: 'toast-top-right' });
+          this.getList();
+        });
+      }
+      this.dialogRef = {} as MatDialogRef<ConfirmationDialog>;
     });
   }
 }

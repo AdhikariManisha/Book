@@ -16,7 +16,6 @@ public class ApiExceptionFilter : ExceptionFilterAttribute
             msg = context.Exception.Message;
         }
         
-        var result = JsonConvert.SerializeObject(new { Message = msg });
-        context.Result = new BadRequestObjectResult(result);
+        context.Result = new BadRequestObjectResult(new { Message = msg });
     }
 }
