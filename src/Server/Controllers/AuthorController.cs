@@ -2,6 +2,7 @@
 using Book.Authors;
 using Book.Domain.Entities;
 using Book.Shared;
+using Book.Shared.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Book.Server.Controllers;
@@ -32,17 +33,29 @@ public class AuthorController : ControllerBase
     [HttpGet]
     public async Task<ActionResult> GetListAsync()
     {
-        var authors = await _authorService.GetListAsync();
+            var authors = await _authorService.GetListAsync();
 
-        return Ok(authors);
+            return Ok(authors);
     }
 
     [HttpPost]
     public async Task<ActionResult> CreateAsync(CreateUpdateAuthorDto input)
     {
-        await _authorService.CreateAsync(input);
+        try
+        {
+            await _authorService.CreateAsync(input);
 
-        return Ok(true);
+            return Ok(true);
+        }
+        catch (Exception ex) {
+            if (ex is ValidationException)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+            else {
+                return BadRequest(new { Message = "internal server error" });
+            }
+        }
     }
 
     [HttpDelete("{id}")]

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Book.Shared.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +21,7 @@ public class AuthorService : IAuthorService
         var authorExits = await _authorRepository.GetByNameAsync(input.AuthorName);
         if (authorExits != null)
         {
-            throw new Exception("Author already Exits.");
+            throw new ValidationException("Author already Exits.");
         }
 
         await _authorRepository.CreateAsync(input);
