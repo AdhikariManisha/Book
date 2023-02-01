@@ -73,4 +73,11 @@ public class AuthorController : ControllerBase
 
         return Ok(true);
     }
+
+    [HttpDelete]
+    public async Task<ActionResult> DeleteManyAsync(List<int> ids)
+    {
+        await _authorService.DeleteManyAsync(ids);
+        return Ok(true);
+    }
 }

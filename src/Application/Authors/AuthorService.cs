@@ -78,4 +78,13 @@ public class AuthorService : IAuthorService
         await _authorRepository.UpdateAsync(input);
         return true;
     }
+    public async Task DeleteManyAsync(List<int> ids)
+    {
+        if (!ids.Any())
+        {
+            throw new ValidationException("Empty Author List");
+        }
+        await _authorRepository.DeleteManyAsync(ids);
+    }
 }
+

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialog } from '../confirmation-dialog/confirmation-dialog';
@@ -16,11 +16,13 @@ export class AuthorsComponent {
   data: AuthorDto[] = [];
   selected = {} as AuthorDto;
   dialogRef = {} as MatDialogRef<ConfirmationDialog>;
+  isModalOpen = false as Boolean;
+  selectedIds: number[] = [];
+  checkBoxAll: boolean = false;
   constructor(private authorService: AuthorService,
     private toastr: ToastrService,
     private dialog: MatDialog
   ) {
-    this.buildForm();
     this.getList();
   }
 
@@ -46,6 +48,7 @@ export class AuthorsComponent {
       this.form.reset();
       this.selected = {} as AuthorDto;
       this.buildForm();
+      this.isModalOpen = false;
     }
     );
   }
@@ -62,13 +65,14 @@ export class AuthorsComponent {
       this.buildForm();
     });
   }
+
   delete(id?: number) {
     this.dialogRef = this.dialog.open(ConfirmationDialog, {
       disableClose: false
     })
     this.dialogRef.componentInstance.confirmMessage = 'Are you sure you want to delete this item?';
     this.dialogRef.afterClosed().subscribe(result => {
-      if(result){
+      if (result) {
         this.authorService.delete(id as number).subscribe(d => {
           this.toastr.success("Author deleted successfully", "Deleted", { positionClass: 'toast-top-right' });
           this.getList();
@@ -77,5 +81,35 @@ export class AuthorsComponent {
       this.dialogRef = {} as MatDialogRef<ConfirmationDialog>;
     });
   }
+
+  create() {
+    this.isModalOpen = true;
+    this.buildForm();
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
+  }
+  deleteMany() {
+    this.authorService.deleteMany(this.selectedIds).subscribe((d) => {
+      this.toastr.success("Deleted");
+      this.selectedIds = [];
+      this.checkBoxAll = false;
+      this.getList();
+    });
+  }
+  onSelectAll(){
+    this.selectedIds = [];
+    if(this.checkBoxAll){
+      this.data.forEach(s => {
+        this.selectedIds.push((s.id as number));
+      });
+    }
+    var selectedAuthors = document.querySelectorAll('.checkbox-author');
+    selectedAuthors.forEach(s => {
+      (s as HTMLInputElement).checked = this.checkBoxAll;
+    });
+  }
+  
 }
 

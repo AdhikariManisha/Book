@@ -1,20 +1,9 @@
 <div class="card m-2">
-    <div class="card-body">
-        <form [formGroup]="form" (ngSubmit)="save()" class="row">
-            <div class="col-3">
-                <label for="author-name">Author Name</label>
-                <input id="author-name" type="text" class="form-control" formControlName="authorName">
-            </div>
-            <div class="col-1">
-                <label for="author-name">Status</label><br>
-                <input type="checkbox" formControlName="status">
-            </div>
-            <div class="col-3">
-                <br>
-                <input class="btn btn-primary" type="submit" value="{{selected.id?'Update':'Add'}}"
-                    [disabled]="form.invalid">
-            </div>
-        </form>
+    <div class="card-body row">
+        <div class="col-3">
+            <button class="btn btn-primary" type="button" (click)="create()">Create</button>
+            <button class="btn btn-danger mx-3" type="button" (click)="deleteMany()">Delete</button>
+        </div>
     </div>
 </div>
 <br>
@@ -23,6 +12,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <input type="checkbox" [(ngModel)]="checkBoxAll" (ngModelChange)="onSelectAll()">
                     <th>Id</th>
                     <th>AuthorName</th>
                     <th>Status</th>
@@ -31,12 +21,48 @@
             </thead>
             <tbody>
                 <tr *ngFor="let row of data">
+                    <input class="checkbox-author" type="checkbox">
                     <td>{{row.id}}</td>
                     <td>{{row.authorName}}</td>
                     <td>{{row.status}}</td>
-                    <td><button class="btn btn-secondary mx-1" type="button" (click)="edit(row.id)">Edit</button> <button class="btn btn-danger" type="button" (click)="delete(row.id)">Delete</button></td>
+                    <td><button class="btn btn-secondary mx-1" type="button" (click)="edit(row.id)">Edit</button>
+                        <button class="btn btn-danger" type="button" (click)="delete(row.id)">Delete</button>
+                    </td>
                 </tr>
             </tbody>
         </table>
+    </div>
+</div>
+
+<div *ngIf="isModalOpen" class="modal show d-block modal-md" id="modalCreateAuthor" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class='modal-header'>
+                <h4 class='modal-title'>Create</h4>
+                <button class="btn btn-close" type="button" (click)="closeModal()"></button>
+            </div>
+            <form [formGroup]="form" (ngSubmit)="save()">
+                <div class="modal-body">
+                    <div class="card m-2">
+                        <div class="card-body row">
+                            <div class="col-12">
+                                <label for="author-name">Author Name</label>
+                                <input id="author-name" type="text" class="form-control" formControlName="authorName">
+                            </div>
+                            <div class="col-12">
+                                <label for="author-name">Status</label><br>
+                                <input type="checkbox" formControlName="status">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="submit" [disabled]="form.invalid">
+                        {{selected.id?'Update':'Add'}}
+                    </button>
+                    <button class="btn btn-danger" (click)="closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>

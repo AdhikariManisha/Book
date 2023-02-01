@@ -14,4 +14,5 @@ public interface IAuthorRepository
     public Task UpdateAsync(CreateUpdateAuthorDto input);
     public Task DeleteAsync(int id);
     public Task<AuthorDto> GetByNameAsync(string name);
+    public Task DeleteManyAsync(List<int> ids);
 }

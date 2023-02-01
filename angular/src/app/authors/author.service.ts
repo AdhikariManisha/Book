@@ -18,6 +18,8 @@ export class AuthorService {
 
   delete = (id: number) => this.httpClient.delete(`${this.apiURL}/${id}`)
 
+  deleteMany =(ids: number[]) => this.httpClient.request('delete', this.apiURL, {body: ids})
+
   constructor(private httpClient: HttpClient) { }
 
 }

@@ -32,6 +32,13 @@ public class AuthorRepository : IAuthorRepository
         _ = await conn.ExecuteAsync(sql, new { Id = id });
     }
 
+    public async Task DeleteManyAsync(List<int> ids)
+    {
+        var conn = _dbConnection.GetConnection();
+        var sql = "Delete from Authors where Id in @ids";
+        _ = await conn.ExecuteAsync(sql, new {ids = ids });
+    }
+
     public async Task<AuthorDto> GetAsync(int id)
     {
         var conn = _dbConnection.GetConnection();

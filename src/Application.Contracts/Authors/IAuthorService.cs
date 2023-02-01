@@ -7,4 +7,5 @@ public interface IAuthorService
     public Task<bool> CreateAsync(CreateUpdateAuthorDto input);
     public Task<bool> UpdateAsync(CreateUpdateAuthorDto input);
     public Task<bool> DeleteAsync(int id );
+    public Task DeleteManyAsync(List<int> ids);
 }
