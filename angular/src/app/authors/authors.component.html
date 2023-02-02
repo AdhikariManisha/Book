@@ -21,7 +21,7 @@
             </thead>
             <tbody>
                 <tr *ngFor="let row of data">
-                    <input class="checkbox-author" type="checkbox">
+                    <input class="checkbox-author" type="checkbox" (change)="onSelect($event.target, row.id)">
                     <td>{{row.id}}</td>
                     <td>{{row.authorName}}</td>
                     <td>{{row.status}}</td>

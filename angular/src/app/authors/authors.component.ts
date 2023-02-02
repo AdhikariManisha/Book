@@ -91,16 +91,31 @@ export class AuthorsComponent {
     this.isModalOpen = false;
   }
   deleteMany() {
-    this.authorService.deleteMany(this.selectedIds).subscribe((d) => {
-      this.toastr.success("Deleted");
-      this.selectedIds = [];
-      this.checkBoxAll = false;
-      this.getList();
+    this.dialogRef = this.dialog.open(ConfirmationDialog, {
+      disableClose: false
+    })
+    this.dialogRef.componentInstance.confirmMessage = 'Are you sure you want to delete these items?';
+    this.dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (!this.selectedIds.length || !this.selectedIds) {
+          this.toastr.error("Please select Author.");
+          this.checkBoxAll = false;
+          return;
+        }
+        this.authorService.deleteMany(this.selectedIds).subscribe((d) => {
+          this.toastr.success("Deleted");
+          this.selectedIds = [];
+          this.checkBoxAll = false;
+          this.getList();
+        });
+      }
+      this.dialogRef = {} as MatDialogRef<ConfirmationDialog>;
     });
   }
-  onSelectAll(){
+
+  onSelectAll() {
     this.selectedIds = [];
-    if(this.checkBoxAll){
+    if (this.checkBoxAll) {
       this.data.forEach(s => {
         this.selectedIds.push((s.id as number));
       });
@@ -110,6 +125,17 @@ export class AuthorsComponent {
       (s as HTMLInputElement).checked = this.checkBoxAll;
     });
   }
-  
+
+  onSelect(cb: any, id?: number) {
+    if (cb.checked) {
+      this.selectedIds.push((id as number));
+    }
+    else {
+      let index = this.selectedIds.indexOf((id as number));
+      if (index !== -1) {
+        this.selectedIds.splice(index, 1);
+      }
+    }
+  }
 }
 
