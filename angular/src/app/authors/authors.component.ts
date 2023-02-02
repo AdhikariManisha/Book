@@ -19,6 +19,9 @@ export class AuthorsComponent {
   isModalOpen = false as Boolean;
   selectedIds: number[] = [];
   checkBoxAll: boolean = false;
+  filter = {} as AuthorDto;
+  showFilter: boolean = false;
+
   constructor(private authorService: AuthorService,
     private toastr: ToastrService,
     private dialog: MatDialog
@@ -55,6 +58,13 @@ export class AuthorsComponent {
 
   getList() {
     this.authorService.getList().subscribe((s: AuthorDto[]) => {
+      this.data = s;
+    })
+  }
+
+
+  getListByFilter() {
+    this.authorService.getListByFilter(this.filter).subscribe((s: AuthorDto[]) => {
       this.data = s;
     })
   }
@@ -136,6 +146,14 @@ export class AuthorsComponent {
         this.selectedIds.splice(index, 1);
       }
     }
+  }
+  
+  search(){
+    this.getListByFilter();
+  }
+
+  toggleFilter(){
+    this.showFilter = !this.showFilter;
   }
 }
 

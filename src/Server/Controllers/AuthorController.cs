@@ -33,9 +33,9 @@ public class AuthorController : ControllerBase
     [HttpGet]
     public async Task<ActionResult> GetListAsync()
     {
-            var authors = await _authorService.GetListAsync();
+        var authors = await _authorService.GetListAsync();
 
-            return Ok(authors);
+        return Ok(authors);
     }
 
     [HttpPost]
@@ -47,12 +47,14 @@ public class AuthorController : ControllerBase
 
             return Ok(true);
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             if (ex is ValidationException)
             {
                 return BadRequest(new { Message = ex.Message });
             }
-            else {
+            else
+            {
                 return BadRequest(new { Message = "internal server error" });
             }
         }
@@ -80,4 +82,12 @@ public class AuthorController : ControllerBase
         await _authorService.DeleteManyAsync(ids);
         return Ok(true);
     }
+    [HttpGet("get-list-by-filter")]
+    public async Task<ActionResult> GetListByFilterAsync([FromQuery]AuthorFilter filter)
+    {
+        var authors = await _authorService.GetListByFilterAsync(filter);
+
+        return Ok(authors);
+    }
+
 }

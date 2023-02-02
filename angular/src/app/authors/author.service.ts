@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CreateUpdateAuthorDto } from './model';
+import { AuthorFilter, CreateUpdateAuthorDto } from './model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +20,9 @@ export class AuthorService {
 
   deleteMany =(ids: number[]) => this.httpClient.request('delete', this.apiURL, {body: ids})
 
-  constructor(private httpClient: HttpClient) { }
+  getListByFilter(filter: any): Observable<any>{
+   return this.httpClient.get(`${this.apiURL}/get-list-by-filter`, {params: filter});
+  }
 
+  constructor(private httpClient: HttpClient) { }
 }

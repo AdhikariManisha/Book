@@ -86,5 +86,11 @@ public class AuthorService : IAuthorService
         }
         await _authorRepository.DeleteManyAsync(ids);
     }
+
+    public  async Task<List<AuthorDto>> GetListByFilterAsync(AuthorFilter filter)
+    {
+        var dtos = await _authorRepository.GetListByFilterAsync(filter);
+        return dtos;
+    }
 }
 

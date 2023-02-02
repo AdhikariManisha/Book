@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
+using Book.Application.Contracts.Repositories;
 
 namespace Book.Authors;
 public class AuthorRepository : IAuthorRepository
@@ -61,6 +62,15 @@ public class AuthorRepository : IAuthorRepository
         var sql = "select * from Authors";
         var authors = await conn.QueryAsync<AuthorDto>(sql);
         return authors.ToList();        
+    }
+
+    public async Task<List<AuthorDto>> GetListByFilterAsync(AuthorFilter filter)
+    {
+        var conn = _dbConnection.GetConnection();
+        var sql = "select * from Authors as A where (@AuthorName is null or A.AuthorName like @AuthorName + '%')" +
+            " and (@Status is null or A.Status=@Status)";
+        var authors = await conn.QueryAsync<AuthorDto>(sql, new { filter.AuthorName, filter.Status });
+        return authors.ToList();
     }
 
     public async Task UpdateAsync(CreateUpdateAuthorDto input)

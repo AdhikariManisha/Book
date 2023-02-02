@@ -10,6 +10,7 @@ public interface IAuthorRepository
 {
     public Task<AuthorDto> GetAsync(int id);
     public Task<List<AuthorDto>> GetListAsync();
+    public Task<List<AuthorDto>> GetListByFilterAsync(AuthorFilter filter);
     public Task<int> CreateAsync(CreateUpdateAuthorDto input);
     public Task UpdateAsync(CreateUpdateAuthorDto input);
     public Task DeleteAsync(int id);

@@ -6,6 +6,7 @@ public interface IAuthorService
     public Task<List<AuthorDto>> GetListAsync();
     public Task<bool> CreateAsync(CreateUpdateAuthorDto input);
     public Task<bool> UpdateAsync(CreateUpdateAuthorDto input);
-    public Task<bool> DeleteAsync(int id );
+    public Task<bool> DeleteAsync(int id);
     public Task DeleteManyAsync(List<int> ids);
+    public Task<List<AuthorDto>> GetListByFilterAsync(AuthorFilter filter);
 }

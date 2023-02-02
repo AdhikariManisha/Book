@@ -1,13 +1,47 @@
-<div class="card m-2">
-    <div class="card-body row">
+<div class="card mx-2 mt-1">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-8">
+                <h5 class="card-title">Filter</h5>
+            </div>
+            <div class="col-4 text-end">
+                <i class="fa fa-filter" (click)="toggleFilter()"></i>
+            </div>
+        </div>
+    </div>
+    <div class="card-body row" *ngIf="showFilter">
+        <div class="col col-md-2 col-sm-4">
+            <label for="filter-author-name">Author Name</label>
+            <input id="filter-author-name" type="text" class="form-control" [(ngModel)]="filter.authorName">
+        </div>
+        <div class="col col-md-2 col-sm-4">
+            <label for="filter-status">Status</label>
+            <select id="filter-status" class="form-control" [(ngModel)]="filter.status">
+                <option value="">All</option>
+                <option value="true">Enabled</option>
+                <option value="false">Disabled</option>
+            </select>
+        </div>
         <div class="col-3">
+            <br>
+            <button class="btn btn-primary" type="button" (click)="search()">Search</button>
+        </div>
+    </div>
+</div>
+<br>
+
+<div class="card mx-2">
+    <div class="card-body row">
+        <div class="col-auto">
             <button class="btn btn-primary" type="button" (click)="create()">Create</button>
+            </div>
+        <div class="col-auto">
             <button class="btn btn-danger mx-3" type="button" (click)="deleteMany()">Delete</button>
         </div>
     </div>
 </div>
 <br>
-<div class="card m-2">
+<div class="card mx-2">
     <div class="card-body">
         <table class="table">
             <thead>
