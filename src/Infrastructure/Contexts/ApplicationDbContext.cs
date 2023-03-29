@@ -11,6 +11,7 @@ namespace Book.Infrastructure.Contexts
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> option): base(option)
         { 
         }
+        #region Entities
         public DbSet<Author> Authors { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Book.Domain.Entities.Book> Books { get; set; }
@@ -18,6 +19,8 @@ namespace Book.Infrastructure.Contexts
         public DbSet<BookGenre> BookGenres { get; set; }
         public DbSet<BookIssue> BookIssues { get; set; }
         public DbSet<Department> Departments { get; set; }
+
+        #endregion entities
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
