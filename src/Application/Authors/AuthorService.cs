@@ -1,4 +1,7 @@
-﻿using Book.Shared.Exceptions;
+﻿using Book.Application.Contracts.Repositories;
+using Book.Domain.Entities;
+using Book.Shared.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +13,12 @@ namespace Book.Authors;
 public class AuthorService : IAuthorService
 {
     private readonly IAuthorRepository _authorRepository;
+    private readonly IRepository<Author, int> _authorRepo;
 
-    public AuthorService(IAuthorRepository authorRepository)
+    public AuthorService(IAuthorRepository authorRepository, IRepository<Author, int> authorRepo)
     {
         _authorRepository = authorRepository;
+        _authorRepo = authorRepo;
     }
 
     public async Task<bool> CreateAsync(CreateUpdateAuthorDto input)
@@ -89,7 +94,19 @@ public class AuthorService : IAuthorService
 
     public  async Task<List<AuthorDto>> GetListByFilterAsync(AuthorFilter filter)
     {
-        var dtos = await _authorRepository.GetListByFilterAsync(filter);
+        // var dtos = await _authorRepository.GetListByFilterAsync(filter);
+        var dtos = await _authorRepo.Entities.Select(s => new AuthorDto
+        {
+            Id = s.Id,
+            AuthorName = s.AuthorName,
+            Status = s.Status,
+            CreatedBy = s.CreatedBy,
+            CreatedDate = s.CreatedDate,
+            UpdatedBy = s.UpdatedBy,
+            UpdatedDate = s.UpdatedDate
+        })
+            .Where(s => (string.IsNullOrWhiteSpace(filter.AuthorName) || s.AuthorName.Contains(filter.AuthorName))
+                && (filter.Status == null || s.Status == filter.Status)).ToListAsync();
         return dtos;
     }
 }

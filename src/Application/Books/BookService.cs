@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Book.Application.Contracts.Services;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
+using Book.Shared.Exceptions;
 
 namespace Book.Application.Books;
 public class BookService : IBookService
@@ -183,6 +184,19 @@ public class BookService : IBookService
         var dtos = _mapper.Map<List<BookDto>>(books);
 
         return dtos;
+    }
+
+    public async Task IssueBook(int id)
+    {
+        var book =  await _bookRepository.GetAsync(id);
+        if (book == null) {
+            throw new ValidationException("Book Not Found");
+        }
+
+        book.IssueDate = DateTime.Now;
+        book.IssueTo = 1;
+
+       await _bookRepository.UpdateAsync(id, book);
     }
 
     public async Task<bool> UpdateAsync(int id, CreateUpdateBookDto dto)

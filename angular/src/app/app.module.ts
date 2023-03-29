@@ -14,6 +14,7 @@ import {MatDialogRef, MatDialogModule} from '@angular/material/dialog'
 import{ MatButtonModule} from '@angular/material/button'
 import{ MatCardModule} from '@angular/material/card'
 import { GlobalErrorHandlerService } from './global-error-handler.service';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 @NgModule({
   declarations: [
@@ -33,11 +34,12 @@ import { GlobalErrorHandlerService } from './global-error-handler.service';
       timeOut: 5000,
       positionClass: 'toast-bottom-right',
       closeButton: true,
-      preventDuplicates: true
+      preventDuplicates: true,
     }),
     MatDialogModule,
     MatButtonModule,
-    MatCardModule
+    MatCardModule,
+    NgxDatatableModule
   ],
   providers: [{provide: ErrorHandler, useClass: GlobalErrorHandlerService}, HttpClient, AuthorService ],
   bootstrap: [AppComponent],

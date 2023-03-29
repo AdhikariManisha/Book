@@ -7,7 +7,7 @@ import { AuthorFilter, CreateUpdateAuthorDto } from './model';
   providedIn: 'root'
 })
 export class AuthorService {
-  apiURL = `https://localhost:7024/api/Author`;
+  apiURL = `https://localhost:7024/api/author`;
   get = (id: number): Observable<any> => this.httpClient.get(`${this.apiURL}/${id}`);
 
   create = (dto: CreateUpdateAuthorDto) => this.httpClient.post(this.apiURL, dto);
