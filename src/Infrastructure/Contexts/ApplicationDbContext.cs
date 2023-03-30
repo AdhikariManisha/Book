@@ -1,4 +1,4 @@
-﻿using Book.Domain.Entities;
+using Book.Domain.Entities;
 using Book.Domain.Entities.Identity;
 using Book.Shared.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -20,7 +20,9 @@ namespace Book.Infrastructure.Contexts
         public DbSet<BookIssue> BookIssues { get; set; }
         public DbSet<Department> Departments { get; set; }
 
-        #endregion entities
+                public DbSet<Member> Members { get; set;} 
+        public DbSet<Sale> Sales { get; set;} 
+#endregion entities
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
