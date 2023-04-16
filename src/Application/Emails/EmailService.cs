@@ -1,4 +1,5 @@
 ﻿using Book.Application.Contracts.Emails;
+using Hangfire;
 using Microsoft.Extensions.Configuration;
 using System.Net;
 using System.Net.Mail;
@@ -38,6 +39,27 @@ public class EmailService : IEmailService
             await smtpClient.SendMailAsync(mail);
             Console.WriteLine("Email Send Successfully");
 
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    [AutomaticRetry(Attempts = 1)]
+    public async Task<bool> SendTestEmailAsync()
+    {
+        try
+        {
+            var input = new EmailDto {
+                Subject = "Test",
+                Body = "Hello World!!!",
+                ToEmails = new MailAddressCollection {
+                    new MailAddress("manishaadhikari954@gmail.com")    
+                }
+            };
+            await SendAsync(input);
             return true;
         }
         catch (Exception ex)

@@ -2,4 +2,5 @@
 public interface IEmailService
 {
     Task<bool> SendAsync(EmailDto input);
+    Task<bool> SendTestEmailAsync();
 }

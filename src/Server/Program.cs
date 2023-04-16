@@ -71,7 +71,7 @@ app.UseHangfireDashboard();
 //RecurringJob.AddOrUpdate("Test2", () => Console.WriteLine("This is my first HangFireLab!!!"), "*/2 * * * *");
 //RecurringJob.AddOrUpdate("Test3", () => Console.WriteLine("This is my first HangFireLab!!!"), "1/2 * * * *");
 
-BackgroundJob.Enqueue<IEmailService>(s => s.SendAsync("Hello World!!!"));
+//BackgroundJob.Enqueue<IEmailService>(s => s.SendTestEmailAsync());
 
 app.UseHttpsRedirection();
 
