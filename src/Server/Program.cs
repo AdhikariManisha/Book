@@ -11,11 +11,10 @@ using Book.Application.Emails;
 using Book.Application.Users;
 using Book.Authors;
 using Book.Infrastructure.Repositories;
-using Book.Infrastructure.Seeders;
 using Book.Infrastructure.Services;
 using Book.Server.Extensions;
 using Book.Server.Filters;
-using Book.Shared.Interfaces;
+using Book.Shared.Options;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +47,7 @@ builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 
 builder.Services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
 builder.Services.AddHangfireServer();
+builder.Services.Configure<EmailOption>(builder.Configuration.GetSection(EmailOption.Email));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
