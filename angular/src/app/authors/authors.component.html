@@ -16,15 +16,24 @@
         </div>
         <div class="col col-md-2 col-sm-4">
             <label for="filter-status">Status</label>
-            <select id="filter-status" class="form-control" [(ngModel)]="filter.status">
+            <!-- <select id="filter-status" class="form-control" [(ngModel)]="filter.status">
                 <option value="">All</option>
                 <option value="true">Enabled</option>
                 <option value="false">Disabled</option>
-            </select>
+            </select> -->
+            <ng-select id="filter-status" (ngModel)]="filter.status">
+                <ng-option value="">All</ng-option>
+                <ng-option value="true">Enabled</ng-option>
+                <ng-option value="false">Disabled</ng-option>
+            </ng-select>
         </div>
-        <div class="col-3">
+        <div class="col-1">
             <br>
             <button class="btn btn-primary" type="button" (click)="search()">Search</button>
+        </div>
+        <div class="col-1">
+            <br>
+            <button class="btn btn-warning" type="button" (click)="resetFilters()">Reset</button>
         </div>
     </div>
 </div>
@@ -34,13 +43,14 @@
     <div class="card-body row">
         <div class="col-auto">
             <button class="btn btn-primary" type="button" (click)="create()">Create</button>
-            </div>
+        </div>
         <div class="col-auto">
             <button class="btn btn-danger mx-3" type="button" (click)="deleteMany()">Delete</button>
         </div>
     </div>
 </div>
 <br>
+<!-- 
 <div class="card mx-2">
     <div class="card-body">
         <table class="table">
@@ -58,7 +68,7 @@
                     <input class="checkbox-author" type="checkbox" (change)="onSelect($event.target, row.id)">
                     <td>{{row.id}}</td>
                     <td>{{row.authorName}}</td>
-                    <td>{{row.status}}</td>
+                    <td>{{row.status?"Enabled":"Disabled"}}</td>
                     <td><button class="btn btn-secondary mx-1" type="button" (click)="edit(row.id)">Edit</button>
                         <button class="btn btn-danger" type="button" (click)="delete(row.id)">Delete</button>
                     </td>
@@ -66,13 +76,13 @@
             </tbody>
         </table>
     </div>
-</div>
+</div> -->
 
 <div *ngIf="isModalOpen" class="modal show d-block modal-md" id="modalCreateAuthor" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class='modal-header'>
-                <h4 class='modal-title'>Create</h4>
+                <h4 class='modal-title'>{{selected.id?'Update':'Create'}}</h4>
                 <button class="btn btn-close" type="button" (click)="closeModal()"></button>
             </div>
             <form [formGroup]="form" (ngSubmit)="save()">
@@ -97,6 +107,38 @@
                     <button class="btn btn-danger" (click)="closeModal()">Cancel</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<div class="card mx-2">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <ngx-datatable class="material striped" [headerHeight]="50" rowHeight="auto" [rows]="rows"
+                    [columns]="columns" [scrollbarH]="true" default>
+                    <ngx-datatable-column prop="name">
+                        <ng-template let-value="value">
+                            {{value}}
+                        </ng-template>
+                    </ngx-datatable-column>
+
+                    <ngx-datatable-column prop="age">
+                        <ng-template let-row="row">
+                            {{row.age}}
+                        </ng-template>
+                    </ngx-datatable-column>
+
+                    <ngx-datatable-column prop="gender">
+                        <ng-template let-row="row">
+                            {{row.gender}}
+                        </ng-template>
+                    </ngx-datatable-column>
+
+                    <ngx-datatable-column [name]="'Actions'" [sortable]="false">
+                    </ngx-datatable-column>
+                </ngx-datatable>
+            </div>
         </div>
     </div>
 </div>

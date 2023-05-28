@@ -26,14 +26,17 @@ export class AuthorsComponent {
     private toastr: ToastrService,
     private dialog: MatDialog
   ) {
-    this.getList();
+    this.search();
+    this.buildForm();
   }
 
   buildForm() {
+    this.form.reset();
     this.form = new FormGroup({
       authorName: new FormControl(this.selected.authorName, Validators.required),
       status: new FormControl(this.selected.status ?? false)
     });
+    console.log(this.form);
   }
 
   save() {
@@ -47,21 +50,13 @@ export class AuthorsComponent {
     request.subscribe(s => {
       const msg = this.selected.id ? "Author updated successfully." : "Author saved successfully.";
       this.toastr.success(msg);
-      this.getList();
-      this.form.reset();
+      this.search();
       this.selected = {} as AuthorDto;
       this.buildForm();
       this.isModalOpen = false;
     }
     );
   }
-
-  getList() {
-    this.authorService.getList().subscribe((s: AuthorDto[]) => {
-      this.data = s;
-    })
-  }
-
 
   getListByFilter() {
     this.authorService.getListByFilter(this.filter).subscribe((s: AuthorDto[]) => {
@@ -70,8 +65,10 @@ export class AuthorsComponent {
   }
 
   edit(id?: number) {
+    this.isModalOpen = true;
     this.authorService.get(id as number).subscribe(d => {
       this.selected = d;
+      console.log(d);
       this.buildForm();
     });
   }
@@ -85,7 +82,7 @@ export class AuthorsComponent {
       if (result) {
         this.authorService.delete(id as number).subscribe(d => {
           this.toastr.success("Author deleted successfully", "Deleted", { positionClass: 'toast-top-right' });
-          this.getList();
+          this.search();
         });
       }
       this.dialogRef = {} as MatDialogRef<ConfirmationDialog>;
@@ -99,6 +96,8 @@ export class AuthorsComponent {
 
   closeModal() {
     this.isModalOpen = false;
+    this.selected = {} as AuthorDto;
+    this.buildForm();
   }
   deleteMany() {
     this.dialogRef = this.dialog.open(ConfirmationDialog, {
@@ -116,7 +115,7 @@ export class AuthorsComponent {
           this.toastr.success("Deleted");
           this.selectedIds = [];
           this.checkBoxAll = false;
-          this.getList();
+          this.search();
         });
       }
       this.dialogRef = {} as MatDialogRef<ConfirmationDialog>;
@@ -155,5 +154,19 @@ export class AuthorsComponent {
   toggleFilter(){
     this.showFilter = !this.showFilter;
   }
+
+  resetFilters(){
+    this.filter = {} as AuthorDto;
+  }
+  rows = [
+    {name: 'John Doe', age: 30, gender: 'M'},
+    {name: 'Jane Doe', age: 35, gender: 'F'},
+    {name: 'Bob Smith', age: 40, gender: 'M'}
+  ];
+  columns = [
+    {name: 'Person Name', prop: 'name'},
+    {prop: 'age'},
+    {prop: 'gender'},
+  ]
 }
 

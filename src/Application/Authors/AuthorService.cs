@@ -105,8 +105,10 @@ public class AuthorService : IAuthorService
             UpdatedBy = s.UpdatedBy,
             UpdatedDate = s.UpdatedDate
         })
-            .Where(s => (string.IsNullOrWhiteSpace(filter.AuthorName) || s.AuthorName.Contains(filter.AuthorName))
-                && (filter.Status == null || s.Status == filter.Status)).ToListAsync();
+        .Where(s => (string.IsNullOrWhiteSpace(filter.AuthorName) || s.AuthorName.Contains(filter.AuthorName))
+            && (filter.Status == null || s.Status == filter.Status))
+        .OrderByDescending(s => s.CreatedDate)
+        .ToListAsync();
         return dtos;
     }
 }

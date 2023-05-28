@@ -15,6 +15,7 @@ import{ MatButtonModule} from '@angular/material/button'
 import{ MatCardModule} from '@angular/material/card'
 import { GlobalErrorHandlerService } from './global-error-handler.service';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
     MatDialogModule,
     MatButtonModule,
     MatCardModule,
-    NgxDatatableModule
+    NgxDatatableModule,
+    NgSelectModule
   ],
   providers: [{provide: ErrorHandler, useClass: GlobalErrorHandlerService}, HttpClient, AuthorService ],
   bootstrap: [AppComponent],
