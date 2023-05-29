@@ -2,7 +2,9 @@
 using Book.Authors;
 using Book.Domain.Entities;
 using Book.Shared;
+using Book.Shared.Dtos;
 using Book.Shared.Exceptions;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Book.Server.Controllers;
@@ -83,11 +85,11 @@ public class AuthorController : ControllerBase
         return Ok(true);
     }
     [HttpGet("get-list-by-filter")]
-    public async Task<ActionResult> GetListByFilterAsync([FromQuery]AuthorFilter filter)
+    public async Task<ActionResult> GetListByFilterAsync([FromQuery]PagedResultRequestDto input, [FromQuery]AuthorFilter filter)
     {
-        var authors = await _authorService.GetListByFilterAsync(filter);
-
-        return Ok(authors);
+        var authors = await _authorService.GetListByFilterAsync(input, filter);
+        var response = new ResponseModel<PagedResultDto<AuthorDto>>(true, authors);
+        return Ok(response);
     }
 
 }

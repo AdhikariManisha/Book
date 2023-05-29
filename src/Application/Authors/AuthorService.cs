@@ -1,5 +1,6 @@
 ﻿using Book.Application.Contracts.Repositories;
 using Book.Domain.Entities;
+using Book.Shared.Dtos;
 using Book.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -92,10 +93,10 @@ public class AuthorService : IAuthorService
         await _authorRepository.DeleteManyAsync(ids);
     }
 
-    public  async Task<List<AuthorDto>> GetListByFilterAsync(AuthorFilter filter)
+    public  async Task<PagedResultDto<AuthorDto>> GetListByFilterAsync(PagedResultRequestDto input, AuthorFilter filter)
     {
         // var dtos = await _authorRepository.GetListByFilterAsync(filter);
-        var dtos = await _authorRepo.Entities.Select(s => new AuthorDto
+        var queryable = _authorRepo.Entities.Select(s => new AuthorDto
         {
             Id = s.Id,
             AuthorName = s.AuthorName,
@@ -107,9 +108,16 @@ public class AuthorService : IAuthorService
         })
         .Where(s => (string.IsNullOrWhiteSpace(filter.AuthorName) || s.AuthorName.Contains(filter.AuthorName))
             && (filter.Status == null || s.Status == filter.Status))
-        .OrderByDescending(s => s.CreatedDate)
-        .ToListAsync();
-        return dtos;
+        .OrderByDescending(s => s.CreatedDate);
+
+        var totalCount = await queryable.LongCountAsync();
+        var dtos = await queryable
+                    .Skip(input.SkipCount)
+                    .Take(input.TakeCount)
+                    .ToListAsync();
+        var response = new PagedResultDto<AuthorDto>(totalCount, dtos);
+
+        return response;
     }
 }
 
