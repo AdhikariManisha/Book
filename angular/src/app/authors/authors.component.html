@@ -16,12 +16,7 @@
         </div>
         <div class="col col-md-2 col-sm-4">
             <label for="filter-status">Status</label>
-            <!-- <select id="filter-status" class="form-control" [(ngModel)]="filter.status">
-                <option value="">All</option>
-                <option value="true">Enabled</option>
-                <option value="false">Disabled</option>
-            </select> -->
-            <ng-select id="filter-status" (ngModel)]="filter.status">
+            <ng-select id="filter-status" [(ngModel)]="filter.status">
                 <ng-option value="">All</ng-option>
                 <ng-option value="true">Enabled</ng-option>
                 <ng-option value="false">Disabled</ng-option>
@@ -50,7 +45,7 @@
     </div>
 </div>
 <br>
-<!-- 
+
 <div class="card mx-2">
     <div class="card-body">
         <table class="table">
@@ -64,7 +59,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let row of data">
+                <tr *ngFor="let row of data.items">
                     <input class="checkbox-author" type="checkbox" (change)="onSelect($event.target, row.id)">
                     <td>{{row.id}}</td>
                     <td>{{row.authorName}}</td>
@@ -75,8 +70,12 @@
                 </tr>
             </tbody>
         </table>
+        <mat-paginator [length]="data.totalCount"
+                    [pageSize]="page.takeCount"
+                    [pageSizeOptions]="[5, 10, 25, 100]"
+                    (page)="changePage($event)"></mat-paginator>
     </div>
-</div> -->
+</div> 
 
 <div *ngIf="isModalOpen" class="modal show d-block modal-md" id="modalCreateAuthor" tabindex="-1">
     <div class="modal-dialog">
@@ -95,7 +94,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="author-name">Status</label><br>
-                                <input type="checkbox" formControlName="status">
+                                <input id="author-name" type="checkbox" formControlName="status">
                             </div>
                         </div>
                     </div>
@@ -110,28 +109,36 @@
         </div>
     </div>
 </div>
-
+<!-- 
 <div class="card mx-2">
     <div class="card-body">
         <div class="row">
             <div class="col-12">
-                <ngx-datatable class="material striped" [headerHeight]="50" rowHeight="auto" [rows]="rows"
-                    [columns]="columns" [scrollbarH]="true" default>
-                    <ngx-datatable-column prop="name">
+                <ngx-datatable class="material striped" [headerHeight]="50" rowHeight="auto" 
+                    columnMode="force" [scrollbarH]="true" (page)="setPage($event)"
+                    [rows]="data.items"  [count]="data.totalCount" [offset]="page.skipCount"
+                    [limit]="page.takeCount" [externalPaging]="true">
+                    <ngx-datatable-column prop="authorName">
                         <ng-template let-value="value">
                             {{value}}
                         </ng-template>
                     </ngx-datatable-column>
 
-                    <ngx-datatable-column prop="age">
-                        <ng-template let-row="row">
-                            {{row.age}}
+                    <ngx-datatable-column prop="status">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            {{row.status?'Enabled':'Disabled'}}
                         </ng-template>
                     </ngx-datatable-column>
 
-                    <ngx-datatable-column prop="gender">
-                        <ng-template let-row="row">
-                            {{row.gender}}
+                    <ngx-datatable-column prop="createdDate">
+                        <ng-template let-value="value" ngx-datatable-cell-template>
+                            {{value | date:"yyyy-MM-dd HH:MM a"}}
+                        </ng-template>
+                    </ngx-datatable-column>
+
+                    <ngx-datatable-column prop="updatedDate">
+                        <ng-template let-value="value" ngx-datatable-cell-template>
+                            {{value | date:"short"}}
                         </ng-template>
                     </ngx-datatable-column>
 
@@ -141,4 +148,4 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->

@@ -3,8 +3,11 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialog } from '../confirmation-dialog/confirmation-dialog';
 import { AuthorService, } from './author.service';
-import { CreateUpdateAuthorDto, AuthorDto } from './model';
+import { CreateUpdateAuthorDto, AuthorDto, AuthorFilter } from './model';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog'
+import { PagedResultResponseDto } from '../models/PagedResultResponseDto';
+import { ResponseModal } from '../models/ResponseModel';
+import { PagedResultDto } from '../models/PageResultDto';
 
 @Component({
   selector: 'app-authors',
@@ -13,14 +16,22 @@ import { MatDialogRef, MatDialog } from '@angular/material/dialog'
 })
 export class AuthorsComponent {
   form: FormGroup = new FormGroup({});
-  data: AuthorDto[] = [];
   selected = {} as AuthorDto;
   dialogRef = {} as MatDialogRef<ConfirmationDialog>;
   isModalOpen = false as Boolean;
   selectedIds: number[] = [];
   checkBoxAll: boolean = false;
-  filter = {} as AuthorDto;
+  filter = {} as AuthorFilter;
   showFilter: boolean = false;
+  page = {
+    skipCount : 0,
+    takeCount : 5,
+  } as PagedResultResponseDto;
+
+  data = {
+    totalCount: 0,
+    items: ([] as AuthorDto[])
+  } as PagedResultDto<AuthorDto>;
 
   constructor(private authorService: AuthorService,
     private toastr: ToastrService,
@@ -36,7 +47,6 @@ export class AuthorsComponent {
       authorName: new FormControl(this.selected.authorName, Validators.required),
       status: new FormControl(this.selected.status ?? false)
     });
-    console.log(this.form);
   }
 
   save() {
@@ -59,8 +69,8 @@ export class AuthorsComponent {
   }
 
   getListByFilter() {
-    this.authorService.getListByFilter(this.filter).subscribe((s: AuthorDto[]) => {
-      this.data = s;
+    this.authorService.getListByFilter(this.page, this.filter).subscribe((s: ResponseModal<PagedResultDto<AuthorDto>>) => {
+      this.data = s.data;
     })
   }
 
@@ -68,7 +78,6 @@ export class AuthorsComponent {
     this.isModalOpen = true;
     this.authorService.get(id as number).subscribe(d => {
       this.selected = d;
-      console.log(d);
       this.buildForm();
     });
   }
@@ -125,7 +134,7 @@ export class AuthorsComponent {
   onSelectAll() {
     this.selectedIds = [];
     if (this.checkBoxAll) {
-      this.data.forEach(s => {
+      this.data.items.forEach(s => {
         this.selectedIds.push((s.id as number));
       });
     }
@@ -158,15 +167,21 @@ export class AuthorsComponent {
   resetFilters(){
     this.filter = {} as AuthorDto;
   }
-  rows = [
-    {name: 'John Doe', age: 30, gender: 'M'},
-    {name: 'Jane Doe', age: 35, gender: 'F'},
-    {name: 'Bob Smith', age: 40, gender: 'M'}
-  ];
-  columns = [
-    {name: 'Person Name', prop: 'name'},
-    {prop: 'age'},
-    {prop: 'gender'},
-  ]
+  // rows = [
+  //   {name: 'John Doe', age: 30, gender: 'M'},
+  //   {name: 'Jane Doe', age: 35, gender: 'F'},
+  //   {name: 'Bob Smith', age: 40, gender: 'M'}
+  // ];
+  // columns = [
+  //   {name: 'Person Name', prop: 'name'},
+  //   {prop: 'age'},
+  //   {prop: 'gender'},
+  // ]
+
+  changePage(event: any){
+    this.page.takeCount = event.pageSize;
+    this.page.skipCount = event.pageIndex * this.page.takeCount;
+    this.search();
+  }
 }
 

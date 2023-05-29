@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core'
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthorFilter, CreateUpdateAuthorDto } from './model';
+import { PagedResultResponseDto } from '../models/PagedResultResponseDto';
 
 @Injectable({
   providedIn: 'root'
@@ -14,14 +15,18 @@ export class AuthorService {
 
   getList = (): Observable<any> => this.httpClient.get(this.apiURL);
 
-  update = (dto: CreateUpdateAuthorDto) =>this.httpClient.put(`${this.apiURL}`, dto);
+  update = (dto: CreateUpdateAuthorDto) => this.httpClient.put(`${this.apiURL}`, dto);
 
   delete = (id: number) => this.httpClient.delete(`${this.apiURL}/${id}`)
 
-  deleteMany =(ids: number[]) => this.httpClient.request('delete', this.apiURL, {body: ids})
+  deleteMany = (ids: number[]) => this.httpClient.request('delete', this.apiURL, { body: ids })
 
-  getListByFilter(filter: any): Observable<any>{
-   return this.httpClient.get(`${this.apiURL}/get-list-by-filter`, {params: filter});
+  getListByFilter(input: PagedResultResponseDto, filter: AuthorFilter): Observable<any> {
+    const params = new HttpParams({
+      fromObject: { ...input, ...filter }
+    });
+
+    return this.httpClient.get(`${this.apiURL}/get-list-by-filter`, { params: params });
   }
 
   constructor(private httpClient: HttpClient) { }

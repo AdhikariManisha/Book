@@ -11,8 +11,9 @@ import { BooksComponent } from './books/books.component';
 import { AuthorsComponent } from './authors/authors.component';
 import { ToastrModule } from 'ngx-toastr';
 import {MatDialogRef, MatDialogModule} from '@angular/material/dialog'
-import{ MatButtonModule} from '@angular/material/button'
-import{ MatCardModule} from '@angular/material/card'
+import { MatButtonModule} from '@angular/material/button'
+import { MatCardModule} from '@angular/material/card'
+import { MatPaginatorModule } from '@angular/material/paginator'
 import { GlobalErrorHandlerService } from './global-error-handler.service';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -40,6 +41,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
     MatDialogModule,
     MatButtonModule,
     MatCardModule,
+    MatPaginatorModule,
     NgxDatatableModule,
     NgSelectModule
   ],
