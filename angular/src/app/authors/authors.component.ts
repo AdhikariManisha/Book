@@ -8,6 +8,7 @@ import { MatDialogRef, MatDialog } from '@angular/material/dialog'
 import { PagedResultResponseDto } from '../models/PagedResultResponseDto';
 import { ResponseModal } from '../models/ResponseModel';
 import { PagedResultDto } from '../models/PageResultDto';
+import { MatSort, Sort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-authors',
@@ -33,6 +34,7 @@ export class AuthorsComponent {
     items: ([] as AuthorDto[])
   } as PagedResultDto<AuthorDto>;
 
+  
   constructor(private authorService: AuthorService,
     private toastr: ToastrService,
     private dialog: MatDialog
@@ -167,11 +169,12 @@ export class AuthorsComponent {
   resetFilters(){
     this.filter = {} as AuthorDto;
   }
-  // rows = [
-  //   {name: 'John Doe', age: 30, gender: 'M'},
-  //   {name: 'Jane Doe', age: 35, gender: 'F'},
-  //   {name: 'Bob Smith', age: 40, gender: 'M'}
-  // ];
+  rows = [
+    {authorName: 'John Doe', age: 30, gender: 'M'},
+    {authorName: 'Jane Doe', age: 35, gender: 'F'},
+    {authorName: 'Bob Smith', age: 40, gender: 'M'}
+  ];
+  displayedColumns: string[] = ["id", "authorName", "status", "actions"];
   // columns = [
   //   {name: 'Person Name', prop: 'name'},
   //   {prop: 'age'},
@@ -182,6 +185,10 @@ export class AuthorsComponent {
     this.page.takeCount = event.pageSize;
     this.page.skipCount = event.pageIndex * this.page.takeCount;
     this.search();
+  }
+
+  sortData(sortState: Sort){
+    console.log(sortState);
   }
 }
 
