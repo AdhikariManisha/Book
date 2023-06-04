@@ -155,7 +155,7 @@
     <div class="card-body">
         <mat-table [dataSource]="data.items" matSort (matSortChange)="sortData($event)">
             <ng-container matColumnDef="id">
-                <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="id">Id</mat-header-cell>
                 <mat-cell *matCellDef="let row">{{row.id}}</mat-cell>
             </ng-container>
 
@@ -165,7 +165,7 @@
             </ng-container>
 
             <ng-container matColumnDef="status">
-                <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="status">Status</mat-header-cell>
                 <mat-cell *matCellDef="let row">{{row.status?"Enabled":"Disabled"}}</mat-cell>
             </ng-container>
 
