@@ -85,7 +85,7 @@ public class AuthorController : ControllerBase
         return Ok(true);
     }
     [HttpGet("get-list-by-filter")]
-    public async Task<ActionResult> GetListByFilterAsync([FromQuery]PagedResultRequestDto input, [FromQuery]AuthorFilter filter)
+    public async Task<ActionResult> GetListByFilterAsync([FromQuery]PagedAndSortedResultRequestDto input, [FromQuery]AuthorFilter filter)
     {
         var authors = await _authorService.GetListByFilterAsync(input, filter);
         var response = new ResponseModel<PagedResultDto<AuthorDto>>(true, authors);

@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthorFilter, CreateUpdateAuthorDto } from './model';
 import { PagedResultResponseDto } from '../models/PagedResultResponseDto';
+import { PagedAndSortedResultResponseDto } from '../models/PagedAndSortedResultResponseDto';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,7 @@ export class AuthorService {
 
   deleteMany = (ids: number[]) => this.httpClient.request('delete', this.apiURL, { body: ids })
 
-  getListByFilter(input: PagedResultResponseDto, filter: AuthorFilter): Observable<any> {
+  getListByFilter(input: PagedAndSortedResultResponseDto, filter: AuthorFilter): Observable<any> {
     const params = new HttpParams({
       fromObject: { ...input, ...filter }
     });

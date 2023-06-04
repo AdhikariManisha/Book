@@ -10,5 +10,5 @@ public interface IAuthorService
     public Task<bool> UpdateAsync(CreateUpdateAuthorDto input);
     public Task<bool> DeleteAsync(int id);
     public Task DeleteManyAsync(List<int> ids);
-    public Task<PagedResultDto<AuthorDto>> GetListByFilterAsync(PagedResultRequestDto input, AuthorFilter filter);
+    public Task<PagedResultDto<AuthorDto>> GetListByFilterAsync(PagedAndSortedResultRequestDto input, AuthorFilter filter);
 }

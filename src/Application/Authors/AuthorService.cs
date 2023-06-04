@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -93,9 +94,15 @@ public class AuthorService : IAuthorService
         await _authorRepository.DeleteManyAsync(ids);
     }
 
-    public  async Task<PagedResultDto<AuthorDto>> GetListByFilterAsync(PagedResultRequestDto input, AuthorFilter filter)
+    public  async Task<PagedResultDto<AuthorDto>> GetListByFilterAsync(PagedAndSortedResultRequestDto input, AuthorFilter filter)
     {
         // var dtos = await _authorRepository.GetListByFilterAsync(filter);
+
+        if (string.IsNullOrWhiteSpace(input.Sorting))
+        {
+            input.Sorting = $"{nameof(AuthorDto.CreatedDate)} desc";
+        }
+
         var queryable = _authorRepo.Entities.Select(s => new AuthorDto
         {
             Id = s.Id,
@@ -108,7 +115,7 @@ public class AuthorService : IAuthorService
         })
         .Where(s => (string.IsNullOrWhiteSpace(filter.AuthorName) || s.AuthorName.Contains(filter.AuthorName))
             && (filter.Status == null || s.Status == filter.Status))
-        .OrderByDescending(s => s.CreatedDate);
+        .OrderBy(input.Sorting);
 
         var totalCount = await queryable.LongCountAsync();
         var dtos = await queryable

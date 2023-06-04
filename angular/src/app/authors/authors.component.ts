@@ -9,6 +9,7 @@ import { PagedResultResponseDto } from '../models/PagedResultResponseDto';
 import { ResponseModal } from '../models/ResponseModel';
 import { PagedResultDto } from '../models/PageResultDto';
 import { MatSort, Sort } from '@angular/material/sort';
+import { PagedAndSortedResultResponseDto } from '../models/PagedAndSortedResultResponseDto';
 
 @Component({
   selector: 'app-authors',
@@ -27,7 +28,8 @@ export class AuthorsComponent {
   page = {
     skipCount : 0,
     takeCount : 5,
-  } as PagedResultResponseDto;
+    sorting: ""
+  } as PagedAndSortedResultResponseDto;
 
   data = {
     totalCount: 0,
@@ -68,12 +70,6 @@ export class AuthorsComponent {
       this.isModalOpen = false;
     }
     );
-  }
-
-  getListByFilter() {
-    this.authorService.getListByFilter(this.page, this.filter).subscribe((s: ResponseModal<PagedResultDto<AuthorDto>>) => {
-      this.data = s.data;
-    })
   }
 
   edit(id?: number) {
@@ -159,7 +155,9 @@ export class AuthorsComponent {
   }
   
   search(){
-    this.getListByFilter();
+    this.authorService.getListByFilter(this.page, this.filter).subscribe((s: ResponseModal<PagedResultDto<AuthorDto>>) => {
+      this.data = s.data;
+    })
   }
 
   toggleFilter(){
@@ -188,7 +186,9 @@ export class AuthorsComponent {
   }
 
   sortData(sortState: Sort){
+    this.page.sorting = `${sortState.active} ${sortState.direction}`;
     console.log(sortState);
+    this.search();
   }
 }
 
