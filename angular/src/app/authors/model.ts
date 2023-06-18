@@ -9,6 +9,8 @@ export interface AuthorDto{
     status : boolean;
 }
 export interface AuthorFilter{
-    authorName : string;
-    status : boolean;
+    authorName?: string;
+    status?: boolean;
+    fromDate?: string;
+    toDate?: string;
 }

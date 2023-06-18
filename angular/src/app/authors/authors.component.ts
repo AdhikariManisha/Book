@@ -24,7 +24,7 @@ export class AuthorsComponent {
   selectedIds: number[] = [];
   checkBoxAll: boolean = false;
   filter = {} as AuthorFilter;
-  showFilter: boolean = false;
+  showFilter: boolean = true;
   page = {
     skipCount : 0,
     takeCount : 5,
@@ -36,6 +36,8 @@ export class AuthorsComponent {
     items: ([] as AuthorDto[])
   } as PagedResultDto<AuthorDto>;
 
+  fromDate?: Date;
+  toDate?: Date;
   
   constructor(private authorService: AuthorService,
     private toastr: ToastrService,
@@ -155,6 +157,8 @@ export class AuthorsComponent {
   }
   
   search(){
+    this.filter.fromDate = this.fromDate == null ? "" : this.fromDate.toDateString();
+    this.filter.toDate = this.toDate == null ? "" : this.toDate.toDateString();
     this.authorService.getListByFilter(this.page, this.filter).subscribe((s: ResponseModal<PagedResultDto<AuthorDto>>) => {
       this.data = s.data;
     })
@@ -167,12 +171,12 @@ export class AuthorsComponent {
   resetFilters(){
     this.filter = {} as AuthorDto;
   }
-  rows = [
-    {authorName: 'John Doe', age: 30, gender: 'M'},
-    {authorName: 'Jane Doe', age: 35, gender: 'F'},
-    {authorName: 'Bob Smith', age: 40, gender: 'M'}
-  ];
-  displayedColumns: string[] = ["id", "authorName", "status", "actions"];
+  // rows = [
+  //   {authorName: 'John Doe', age: 30, gender: 'M'},
+  //   {authorName: 'Jane Doe', age: 35, gender: 'F'},
+  //   {authorName: 'Bob Smith', age: 40, gender: 'M'}
+  // ];
+  displayedColumns: string[] = ["id", "authorName", "status", "createdDate", "actions"];
   // columns = [
   //   {name: 'Person Name', prop: 'name'},
   //   {prop: 'age'},

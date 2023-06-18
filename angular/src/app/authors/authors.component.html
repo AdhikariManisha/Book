@@ -10,18 +10,33 @@
         </div>
     </div>
     <div class="card-body row" *ngIf="showFilter">
-        <div class="col col-md-2 col-sm-4">
-            <label for="filter-author-name">Author Name</label>
-            <input id="filter-author-name" type="text" class="form-control" [(ngModel)]="filter.authorName">
+        <div class="col col-md-3 col-sm-6">
+            <mat-form-field>
+                <mat-label for="filter-author-name">Choose a date range</mat-label>
+                <mat-date-range-input [rangePicker]="picker">
+                    <input matStartDate placeholder="Start Date" [(ngModel)]="fromDate">
+                    <input matEndDate placeholder="End Date" [(ngModel)]="toDate">
+                </mat-date-range-input>
+                <mat-hint>MM/DD/YYYY - MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker>
+                </mat-date-range-picker>
+            </mat-form-field>
         </div>
-        <div class="col col-md-2 col-sm-4">
-            <label for="filter-status">Status</label>
-            <ng-select id="filter-status" [(ngModel)]="filter.status">
-                <ng-option value="">All</ng-option>
-                <ng-option value="true">Enabled</ng-option>
-                <ng-option value="false">Disabled</ng-option>
-            </ng-select>
-        </div>
+
+        <mat-form-field class="col col-md-2 col-sm-4">
+            <mat-label for="filter-author-name">Author Name</mat-label>
+            <input matInput id="filter-author-name" type="text" [(ngModel)]="filter.authorName">
+        </mat-form-field>
+        
+        <mat-form-field class="col col-md-2 col-sm-4">
+            <mat-label for="filter-status">Status</mat-label>
+            <mat-select id="filter-status" [(ngModel)]="filter.status">
+                <mat-option value="">All</mat-option>
+                <mat-option value="true">Enabled</mat-option>
+                <mat-option value="false">Disabled</mat-option>
+            </mat-select>
+        </mat-form-field>
         <div class="col-1">
             <br>
             <button class="btn btn-primary" type="button" (click)="search()">Search</button>
@@ -89,14 +104,12 @@
                 <div class="modal-body">
                     <div class="card m-2">
                         <div class="card-body row">
-                            <div class="col-12">
-                                <label for="author-name">Author Name</label>
-                                <input id="author-name" type="text" class="form-control" formControlName="authorName">
-                            </div>
-                            <div class="col-12">
-                                <label for="author-name">Status</label><br>
-                                <input id="author-name" type="checkbox" formControlName="status">
-                            </div>
+                            <mat-form-field class="col-12">
+                                <mat-label for="author-name">Author Name</mat-label>
+                                <input matInput id="author-name" type="text" formControlName="authorName" />
+                            </mat-form-field>
+                            <mat-checkbox id="status" formControlName="status">Status
+                            </mat-checkbox>
                         </div>
                     </div>
                 </div>
@@ -169,6 +182,11 @@
                 <mat-cell *matCellDef="let row">{{row.status?"Enabled":"Disabled"}}</mat-cell>
             </ng-container>
 
+            <ng-container matColumnDef="createdDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate">Created Date</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.createdDate | date : "short"}}</mat-cell>
+            </ng-container>
+
             <ng-container matColumnDef="actions">
                 <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
                 <mat-cell *matCellDef="let row">
@@ -179,10 +197,8 @@
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
         </mat-table>
-        <mat-paginator [length]="data.totalCount"
-        [pageSize]="page.takeCount"
-        [showFirstLastButtons]="true"
-        [pageSizeOptions]="[5, 10, 25, 100]"
-        (page)="changePage($event)"></mat-paginator>
+        <mat-paginator [length]="data.totalCount" [pageSize]="page.takeCount" [showFirstLastButtons]="true"
+            [pageSizeOptions]="[5, 10, 25, 100]" (page)="changePage($event)"></mat-paginator>
     </div>
 </div>
+

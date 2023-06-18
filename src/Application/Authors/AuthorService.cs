@@ -115,6 +115,8 @@ public class AuthorService : IAuthorService
         })
         .Where(s => (string.IsNullOrWhiteSpace(filter.AuthorName) || s.AuthorName.Contains(filter.AuthorName))
             && (filter.Status == null || s.Status == filter.Status))
+        .Where(s => !filter.FromDate.HasValue || s.CreatedDate.Date >= filter.FromDate.Value.Date)
+        .Where(s => !filter.ToDate.HasValue || s.CreatedDate.Date <= filter.ToDate.Value.Date)
         .OrderBy(input.Sorting);
 
         var totalCount = await queryable.LongCountAsync();

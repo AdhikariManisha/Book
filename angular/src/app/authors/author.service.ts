@@ -24,11 +24,10 @@ export class AuthorService {
 
   getListByFilter(input: PagedAndSortedResultResponseDto, filter: AuthorFilter): Observable<any> {
     const params = new HttpParams({
-      fromObject: { ...input, ...filter }
+      fromObject: { ...input, ...filter}
     });
 
     return this.httpClient.get(`${this.apiURL}/get-list-by-filter`, { params: params });
   }
-
   constructor(private httpClient: HttpClient) { }
 }
