@@ -1,8 +1,11 @@
 ﻿using Book.Application.Contracts.Repositories;
 using Book.Domain.Entities;
+using Book.Shared.Constants;
 using Book.Shared.Dtos;
 using Book.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +19,13 @@ public class AuthorService : IAuthorService
 {
     private readonly IAuthorRepository _authorRepository;
     private readonly IRepository<Author, int> _authorRepo;
+    private readonly IMemoryCache _memoryCache;
 
-    public AuthorService(IAuthorRepository authorRepository, IRepository<Author, int> authorRepo)
+    public AuthorService(IAuthorRepository authorRepository, IRepository<Author, int> authorRepo , IMemoryCache memoryCache)
     {
         _authorRepository = authorRepository;
         _authorRepo = authorRepo;
+        _memoryCache = memoryCache;
     }
 
     public async Task<bool> CreateAsync(CreateUpdateAuthorDto input)
@@ -44,13 +49,30 @@ public class AuthorService : IAuthorService
         }
 
         await _authorRepository.DeleteAsync(id);
+        _memoryCache.Remove(CacheKey.Author.GetAll);
+        Console.WriteLine("Remove Cache");
         return true;
     }
 
     public async Task<AuthorDto> GetAsync(int id)
     {
-       var dto = await _authorRepository.GetAsync(id);
-        return dto;
+        AuthorDto dto;
+        var isCache = _memoryCache.TryGetValue($"{CacheKey.Author.Get}:{id}", out dto);
+        if(!isCache)
+        {
+            dto = await _authorRepository.GetAsync(id);
+            var cacheOption = new MemoryCacheEntryOptions
+            {
+                AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1),
+            };
+            _memoryCache.Set($"{CacheKey.Author.Get}:{id}", dto, cacheOption);
+            Console.WriteLine("Get Data from db");
+        }
+        else
+        {
+            Console.WriteLine("Get Data from cache");
+        }
+        return dto; 
     }
 
     public async Task<AuthorDto> GetByNameAsync(string name)
@@ -61,7 +83,25 @@ public class AuthorService : IAuthorService
 
     public async Task<List<AuthorDto>> GetListAsync()
     {
-        var dtos = await _authorRepository.GetListAsync();
+        var dtos = (List<AuthorDto>)_memoryCache.Get(CacheKey.Author.GetAll);
+        if (dtos == null)
+        {
+            dtos = await _authorRepository.GetListAsync();
+            var cacheOption = new MemoryCacheEntryOptions
+            {
+                AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1),
+            };
+            cacheOption.RegisterPostEvictionCallback((key, value, reason, substate) => {
+                Console.WriteLine("Cache expired!");
+
+            });
+            _memoryCache.Set(CacheKey.Author.GetAll, dtos, cacheOption);
+            Console.WriteLine("Get Data from db");
+        }
+        else {
+            Console.WriteLine("Get Data from cache");
+        }
+
         return dtos;
     }
 
