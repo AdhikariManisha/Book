@@ -49,6 +49,9 @@ builder.Services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
 builder.Services.AddHangfireServer();
 builder.Services.Configure<EmailOption>(builder.Configuration.GetSection(EmailOption.Email));
 builder.Services.AddMemoryCache();
+builder.Services.AddStackExchangeRedisCache(options => {
+    options.Configuration = "localhost:6379";
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

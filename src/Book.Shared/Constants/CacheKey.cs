@@ -12,4 +12,9 @@ public static class CacheKey
         public const string GetAll = $"{nameof(Author)}.{nameof(GetAll)}";
         public const string Get = $"{nameof(Author)}.{nameof(Get)}";
     }
+    public static class Book
+    {
+        public const string GetAll = $"{nameof(Book)}.{nameof(GetAll)}";
+        public const string Get = $"{nameof(Book)}.{nameof(Get)}";
+    }
 }
