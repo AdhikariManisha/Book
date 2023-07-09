@@ -21,7 +21,7 @@ public class AuthorService : IAuthorService
     private readonly IRepository<Author, int> _authorRepo;
     private readonly IMemoryCache _memoryCache;
 
-    public AuthorService(IAuthorRepository authorRepository, IRepository<Author, int> authorRepo , IMemoryCache memoryCache)
+    public AuthorService(IAuthorRepository authorRepository, IRepository<Author, int> authorRepo, IMemoryCache memoryCache)
     {
         _authorRepository = authorRepository;
         _authorRepo = authorRepo;
@@ -58,7 +58,7 @@ public class AuthorService : IAuthorService
     {
         AuthorDto dto;
         var isCache = _memoryCache.TryGetValue($"{CacheKey.Author.Get}:{id}", out dto);
-        if(!isCache)
+        if (!isCache)
         {
             dto = await _authorRepository.GetAsync(id);
             var cacheOption = new MemoryCacheEntryOptions
@@ -72,7 +72,7 @@ public class AuthorService : IAuthorService
         {
             Console.WriteLine("Get Data from cache");
         }
-        return dto; 
+        return dto;
     }
 
     public async Task<AuthorDto> GetByNameAsync(string name)
@@ -91,14 +91,16 @@ public class AuthorService : IAuthorService
             {
                 AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1),
             };
-            cacheOption.RegisterPostEvictionCallback((key, value, reason, substate) => {
+            cacheOption.RegisterPostEvictionCallback((key, value, reason, substate) =>
+            {
                 Console.WriteLine("Cache expired!");
 
             });
             _memoryCache.Set(CacheKey.Author.GetAll, dtos, cacheOption);
             Console.WriteLine("Get Data from db");
         }
-        else {
+        else
+        {
             Console.WriteLine("Get Data from cache");
         }
 
@@ -108,7 +110,8 @@ public class AuthorService : IAuthorService
     public async Task<bool> UpdateAsync(CreateUpdateAuthorDto input)
     {
         var authorExits = await _authorRepository.GetAsync(input.Id);
-        if (authorExits == null) {
+        if (authorExits == null)
+        {
             throw new ValidationException("Author not found.");
         }
 
@@ -134,7 +137,7 @@ public class AuthorService : IAuthorService
         await _authorRepository.DeleteManyAsync(ids);
     }
 
-    public  async Task<PagedResultDto<AuthorDto>> GetListByFilterAsync(PagedAndSortedResultRequestDto input, AuthorFilter filter)
+    public async Task<PagedResultDto<AuthorDto>> GetListByFilterAsync(PagedAndSortedResultRequestDto input, AuthorFilter filter)
     {
         // var dtos = await _authorRepository.GetListByFilterAsync(filter);
 
