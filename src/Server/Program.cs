@@ -48,6 +48,7 @@ builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 builder.Services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
 builder.Services.AddHangfireServer();
 builder.Services.Configure<EmailOption>(builder.Configuration.GetSection(EmailOption.Email));
+builder.Services.Configure<CacheOption>(builder.Configuration.GetSection(CacheOption.Cache));
 builder.Services.AddMemoryCache();
 builder.Services.AddStackExchangeRedisCache(options => {
     options.Configuration = "localhost:6379";

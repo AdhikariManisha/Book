@@ -15,6 +15,8 @@ using Book.Shared.Exceptions;
 using Microsoft.Extensions.Caching.Distributed;
 using Book.Shared.Constants;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
+using Book.Shared.Options;
 
 namespace Book.Application.Books;
 public class BookService : IBookService
@@ -28,6 +30,7 @@ public class BookService : IBookService
     private readonly IUnitOfWork<int> _unitOfWork;
     private readonly IConfiguration _configuration;
     private readonly IDistributedCache _cache;
+    private readonly CacheOption _cacheOption;
 
     public BookService(
         IRepository<Domain.Entities.Book, int> bookRepository,
@@ -38,7 +41,8 @@ public class BookService : IBookService
         IMapper mapper,
         IUnitOfWork<int> unitOfWork,
         IConfiguration configuration,
-        IDistributedCache cache
+        IDistributedCache cache,
+        IOptions<CacheOption> cacheOption
         )
     {
         _bookRepository = bookRepository;
@@ -50,6 +54,7 @@ public class BookService : IBookService
         _unitOfWork = unitOfWork;
         _configuration = configuration;
         _cache = cache;
+        _cacheOption = cacheOption.Value;
     }
 
     public async Task<bool> CreateAsync(CreateUpdateBookDto dto)
@@ -192,7 +197,7 @@ public class BookService : IBookService
         var dtos = _mapper.Map<List<BookDto>>(books);
         var dataToCacheAsString = JsonSerializer.Serialize(dtos);
         var dataToCache = Encoding.UTF8.GetBytes(dataToCacheAsString);
-        var options = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTimeOffset.Now.AddMinutes(1));
+        var options = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTimeOffset.Now.AddMinutes(_cacheOption.BookGetListAbsoluteExpirationInMins));
         await _cache.SetAsync(CacheKey.Book.GetAll, dataToCache, options);
         return dtos;
     }
