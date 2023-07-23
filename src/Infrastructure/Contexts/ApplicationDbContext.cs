@@ -38,6 +38,8 @@ namespace Book.Infrastructure.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<BookAuthor>()
                 .HasOne(s => s.Book)
                 .WithMany()
@@ -60,7 +62,16 @@ namespace Book.Infrastructure.Contexts
                     }
                 );
 
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<BookUser>(s =>
+            {
+                s.ToTable(name: "Users");
+            });
+
+            modelBuilder.Entity<BookRole>(s =>
+            {
+                s.ToTable(name: "Roles");
+            });
+
         }
     }
 }
