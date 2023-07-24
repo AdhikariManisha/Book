@@ -1,4 +1,5 @@
-﻿using Book.Domain.Entities.Identity;
+﻿using Book.Application.Contracts.Permissions;
+using Book.Domain.Entities.Identity;
 using Book.Shared.Constants;
 using Book.Shared.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +7,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,12 +39,35 @@ public class RoleDataSeeder : IDataSeeder
 
     private async Task AddRole(string roleName)
     {
-        var role = new BookRole { 
+        var newRole = new BookRole
+        {
             Name = roleName,
         };
-        var roleExists = await _roleManager.FindByNameAsync(role.Name);
-        if (roleExists == null) {
-            await _roleManager.CreateAsync(role);
+        var role = await _roleManager.FindByNameAsync(newRole.Name);
+        if (role == null)
+        {
+            await _roleManager.CreateAsync(newRole);
+            role = await _roleManager.FindByNameAsync(newRole.Name);
+        }
+
+        var permissions = new List<string>
+        {
+            BookPermissions.Genres.Default,
+            BookPermissions.Genres.Create,
+            BookPermissions.Genres.Edit,
+            BookPermissions.Genres.Delete,
+        };
+
+        var claims = await _roleManager.GetClaimsAsync(role);
+
+        foreach (var permission in permissions.Except(claims.Select(s => s.Value)))
+        {
+            await _roleManager.AddClaimAsync(role, new Claim("Permission", permission));
+        }
+
+        foreach (var claim in claims.ExceptBy(permissions, s => s.Value))
+        {
+            await _roleManager.RemoveClaimAsync(role, claim);
         }
     }
 }
