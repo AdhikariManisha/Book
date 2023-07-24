@@ -4,18 +4,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Book.Server.Extensions
 {
-    public static class ServiceCollectionExtenion
+    public static class ServiceCollectionExtension
     {
-        public static IServiceCollection AddAndMigrateDb(this IServiceCollection servics, string? connectionString) {
+        public static IServiceCollection AddAndMigrateDb(this IServiceCollection service, string? connectionString) {
             ArgumentNullException.ThrowIfNull(connectionString);
 
-            servics.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString, e => e.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+            service.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString, e => e.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
-            return servics;
+            return service;
         }
-        public static IServiceCollection AddIdentity(this IServiceCollection servics)
+        public static IServiceCollection AddIdentity(this IServiceCollection service)
         {
-            servics.AddIdentity<BookUser, BookRole>(options =>
+            service.AddIdentity<BookUser, BookRole>(options =>
             {
                 options.Password.RequiredLength = 6;
                 options.Password.RequireDigit = false;
@@ -25,7 +25,7 @@ namespace Book.Server.Extensions
                 options.User.RequireUniqueEmail = true;
             }).AddEntityFrameworkStores<ApplicationDbContext>();
 
-            return servics;
+            return service;
         }
     }
 }

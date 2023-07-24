@@ -15,13 +15,15 @@ public class UserController : ControllerBase
     {
         _userService = userService;
     }
+
     //[Authorize("Book.User.Login")]
     [HttpPost("login")]
     public async Task<ActionResult> LoginAsync(UserLoginDto dto)
     {
-        var isSuccess = await _userService.LoginAsync(dto);
-        return Ok(isSuccess);
+        var response = await _userService.LoginAsync(dto);
+        return Ok(response);
     }
+
     [HttpPost("register")]
     public async Task<ActionResult> RegisterAsync(UserRegisterDto dto)
     {
