@@ -1,5 +1,6 @@
 ﻿using Book.Domain.Entities.Identity;
 using Book.Infrastructure.Contexts;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Book.Server.Extensions
@@ -23,7 +24,8 @@ namespace Book.Server.Extensions
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
                 options.User.RequireUniqueEmail = true;
-            }).AddEntityFrameworkStores<ApplicationDbContext>();
+            }).AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
             return service;
         }

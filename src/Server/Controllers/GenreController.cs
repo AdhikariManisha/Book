@@ -1,6 +1,9 @@
 ﻿using Book.Application.Contracts.Repositories;
 using Book.Domain.Entities;
 using Book.Infrastructure.Repositories;
+using Book.Shared.Constants;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Book.Server.Controllers;
@@ -38,6 +41,7 @@ public class GenreController : ControllerBase
         return Ok(true);
     }
 
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = nameof(Roles.User))]
     [HttpGet("{id}")]
     public async Task<ActionResult> GetAsync(int id)
     {
@@ -47,6 +51,7 @@ public class GenreController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult> GetListAsync()
     {
         var genres = await _genreRepository.GetListAsync();
