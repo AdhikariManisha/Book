@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Book.Application.Contracts.Permissions;
 public static class BookPermissions
 {
-    public const string GroupName = "Book";
+    private const string GroupName = "Book";
     public static class Genres
     {
         public const string Default = $"{GroupName}.Genres";

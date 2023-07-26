@@ -1,4 +1,5 @@
-﻿using Book.Application.Contracts.Repositories;
+﻿using Book.Application.Contracts.Permissions;
+using Book.Application.Contracts.Repositories;
 using Book.Domain.Entities;
 using Book.Infrastructure.Repositories;
 using Book.Shared.Constants;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Book.Server.Controllers;
 
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = BookPermissions.Genres.Default)]
 [ApiController]
 [Route("/api/[Controller]")]
 public class GenreController : ControllerBase

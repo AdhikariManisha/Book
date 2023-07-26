@@ -20,13 +20,20 @@ namespace Book.Application.Users;
 public class UserService : IUserService
 {
     private readonly UserManager<BookUser> _userManager;
+    private readonly RoleManager<BookRole> _roleManager;
     private readonly IMapper _mapper;
     private readonly IConfiguration _configuration;
     private readonly JWTOption _jwtOption;
 
-    public UserService(UserManager<BookUser> userManager, IMapper mapper, IConfiguration configuration, IOptions<JWTOption> jwtOption)
+    public UserService(
+        UserManager<BookUser> userManager, 
+        RoleManager<BookRole> roleManager,
+        IMapper mapper, 
+        IConfiguration configuration, 
+        IOptions<JWTOption> jwtOption)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
         _mapper = mapper;
         _configuration = configuration;
         _jwtOption = jwtOption.Value;
@@ -104,16 +111,26 @@ public class UserService : IUserService
         {
             throw new Exception("Invalid Username/Password.");
         }
-
-        var authClaims = new List<Claim> { 
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        var userClaims = await _userManager.GetClaimsAsync(user);
+        var authClaims = new List<Claim> {
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(ClaimTypes.NameIdentifier, user.UserName),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Name, user.Name),
+            new Claim(ClaimTypes.Surname, user.Surname)
         };
+        authClaims.AddRange(userClaims);
 
         var userRoles = await _userManager.GetRolesAsync(user);
-        foreach (var role in userRoles)
+        foreach (var roleName in userRoles)
         {
-            authClaims.Add(new Claim(ClaimTypes.Role, role));
+            authClaims.Add(new Claim(ClaimTypes.Role, roleName));
+            var role = await _roleManager.FindByNameAsync(roleName);
+            if (role != null)
+            {
+                var roleClaims = await _roleManager.GetClaimsAsync(role);
+                authClaims.AddRange(roleClaims);
+            }
         }
 
         var token = new JwtSecurityToken(

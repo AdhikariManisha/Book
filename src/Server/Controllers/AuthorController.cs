@@ -1,16 +1,20 @@
-﻿using Book.Application.Contracts.Repositories;
+﻿using Book.Application.Contracts.Permissions;
+using Book.Application.Contracts.Repositories;
 using Book.Authors;
 using Book.Domain.Entities;
 using Book.Shared;
 using Book.Shared.Dtos;
 using Book.Shared.Exceptions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Book.Server.Controllers;
+
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = BookPermissions.Authors.Default)]
 [ApiController]
 [Route("api/[Controller]")]
-
 public class AuthorController : ControllerBase
 {
     private readonly IAuthorService _authorService;

@@ -14,10 +14,13 @@ using Book.Infrastructure.Repositories;
 using Book.Infrastructure.Services;
 using Book.Server.Extensions;
 using Book.Server.Filters;
+using Book.Server.Handlers;
+using Book.Server.MiddleWare;
 using Book.Shared.Options;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -32,6 +35,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddAutoMapper(typeof(BookApplicationAutoMapperProfile));
 
 builder.Services.AddAndMigrateDb(connectionString);
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddIdentity();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
@@ -46,32 +50,7 @@ builder.Services.AddControllers(option => option.Filters.Add<ApiExceptionFilter>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options => {
-    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Scheme = JwtBearerDefaults.AuthenticationScheme,
-        BearerFormat = "JWT",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
-        Description = "Input your Bearer token in this format - Bearer {your token here} to access this API"
-
-    });
-    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement {
-        {
-            new OpenApiSecurityScheme{
-                Reference = new OpenApiReference{ 
-                    Type = ReferenceType.SecurityScheme,
-                    Id = JwtBearerDefaults.AuthenticationScheme,
-                },
-                Scheme = JwtBearerDefaults.AuthenticationScheme,
-                Name = JwtBearerDefaults.AuthenticationScheme,
-                In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-            },
-            new List<string>()
-        }
-    });
-});
+builder.Services.AddSwagger();
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 {
     builder.WithOrigins(@"http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
@@ -86,6 +65,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddStackExchangeRedisCache(options => {
     options.Configuration = "localhost:6379";
 });
+//builder.Services.AddScoped<IAuthorizationHandler, PoliciesAuthorizationHandler>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -112,7 +92,7 @@ app.UseHangfireDashboard();
 //BackgroundJob.Enqueue<IEmailService>(s => s.SendTestEmailAsync());
 
 app.UseHttpsRedirection();
-
+//app.UseMiddleware<JwtClaimsMiddleWare>();
 app.UseAuthentication();
 app.UseAuthorization();
 
