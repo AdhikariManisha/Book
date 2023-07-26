@@ -24,12 +24,25 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Configuration;
 using System.Security.Cryptography;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
+Log.Logger = new LoggerConfiguration()
+#if DEBUG
+    .MinimumLevel.Debug()
+#else
+        .MinimumLevel.Information()
+#endif
+    .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Information)
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Information)
+    .Enrich.FromLogContext()
+    .WriteTo.Async(s => s.File("Logs/logs.txt", rollingInterval: RollingInterval.Day))
+    .WriteTo.Async(s => s.Console()) // Log to the console
+    .CreateLogger();
+builder.Host.UseSerilog();
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddAutoMapper(typeof(BookApplicationAutoMapperProfile));
@@ -47,7 +60,6 @@ builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IAuthorService, AuthorService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddControllers(option => option.Filters.Add<ApiExceptionFilter>());
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwagger();

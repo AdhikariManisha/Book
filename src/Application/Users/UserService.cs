@@ -8,6 +8,7 @@ using Dapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
@@ -23,6 +24,7 @@ public class UserService : IUserService
     private readonly RoleManager<BookRole> _roleManager;
     private readonly IMapper _mapper;
     private readonly IConfiguration _configuration;
+    private readonly ILogger<UserService> _logger;
     private readonly JWTOption _jwtOption;
 
     public UserService(
@@ -30,12 +32,15 @@ public class UserService : IUserService
         RoleManager<BookRole> roleManager,
         IMapper mapper, 
         IConfiguration configuration, 
-        IOptions<JWTOption> jwtOption)
+        IOptions<JWTOption> jwtOption,
+        ILogger<UserService> logger
+        )
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _mapper = mapper;
         _configuration = configuration;
+        _logger = logger;
         _jwtOption = jwtOption.Value;
     }
 
@@ -99,49 +104,58 @@ public class UserService : IUserService
 
     public async Task<TokenDto> LoginAsync(UserLoginDto dto)
     {
-        var user = await _userManager.FindByNameAsync(dto.UserName);
-        if (user == null)
+        try
         {
-            throw new Exception("Invalid Username/Password");
-        }
+            _logger.LogInformation("UserService :: LoginAsync :: Started");
+            var user = await _userManager.FindByNameAsync(dto.UserName);
+            if (user == null)
+            {
+                throw new Exception("Invalid Username/Password");
+            }
 
-        bool isValidPassword = await _userManager.CheckPasswordAsync(user, dto.Password);
+            bool isValidPassword = await _userManager.CheckPasswordAsync(user, dto.Password);
 
-        if (!isValidPassword)
-        {
-            throw new Exception("Invalid Username/Password.");
-        }
-        var userClaims = await _userManager.GetClaimsAsync(user);
-        var authClaims = new List<Claim> {
+            if (!isValidPassword)
+            {
+                throw new Exception("Invalid Username/Password.");
+            }
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            var authClaims = new List<Claim> {
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.NameIdentifier, user.UserName),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Name, user.Name),
             new Claim(ClaimTypes.Surname, user.Surname)
         };
-        authClaims.AddRange(userClaims);
+            authClaims.AddRange(userClaims);
 
-        var userRoles = await _userManager.GetRolesAsync(user);
-        foreach (var roleName in userRoles)
-        {
-            authClaims.Add(new Claim(ClaimTypes.Role, roleName));
-            var role = await _roleManager.FindByNameAsync(roleName);
-            if (role != null)
+            var userRoles = await _userManager.GetRolesAsync(user);
+            foreach (var roleName in userRoles)
             {
-                var roleClaims = await _roleManager.GetClaimsAsync(role);
-                authClaims.AddRange(roleClaims);
+                authClaims.Add(new Claim(ClaimTypes.Role, roleName));
+                var role = await _roleManager.FindByNameAsync(roleName);
+                if (role != null)
+                {
+                    var roleClaims = await _roleManager.GetClaimsAsync(role);
+                    authClaims.AddRange(roleClaims);
+                }
             }
+
+            var token = new JwtSecurityToken(
+                    issuer: _jwtOption.Issuer,
+                    audience: _jwtOption.Audience,
+                    expires: DateTime.Now.AddMinutes(_jwtOption.ExpiresInMins),
+                    claims: authClaims,
+                    signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOption.Secret)), SecurityAlgorithms.HmacSha256)
+                );
+            _logger.LogInformation("UserService :: LoginAsync :: Ended");
+
+            return new TokenDto(new JwtSecurityTokenHandler().WriteToken(token), token.ValidTo);
         }
-
-        var token = new JwtSecurityToken(
-                issuer: _jwtOption.Issuer,
-                audience: _jwtOption.Audience,
-                expires: DateTime.Now.AddMinutes(_jwtOption.ExpiresInMins),
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOption.Secret)), SecurityAlgorithms.HmacSha256)
-            );
-
-        return new TokenDto(new JwtSecurityTokenHandler().WriteToken(token), token.ValidTo);
+        catch (Exception ex) { 
+            _logger.LogInformation($"UserService :: LoginAsync :: Exception :: {ex.Message}");
+            throw;
+        }
     }
 
     public async Task<bool> RegisterAsync(UserRegisterDto dto)
