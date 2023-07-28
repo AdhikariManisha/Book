@@ -39,7 +39,7 @@ Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Information)
     .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Information)
     .Enrich.FromLogContext()
-    .WriteTo.Async(s => s.File("Logs/logs.txt", rollingInterval: RollingInterval.Day))
+    .WriteTo.Async(s => s.File("Logs/logs.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7))
     .WriteTo.Async(s => s.Console()) // Log to the console
     .CreateLogger();
 builder.Host.UseSerilog();
