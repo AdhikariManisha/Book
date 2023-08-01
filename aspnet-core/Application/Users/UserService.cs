@@ -152,7 +152,8 @@ public class UserService : IUserService
 
             return new TokenDto(new JwtSecurityTokenHandler().WriteToken(token), token.ValidTo);
         }
-        catch (Exception ex) { 
+        catch (Exception ex) {
+            var type = ex.GetType();
             _logger.LogInformation($"UserService :: LoginAsync :: Exception :: {ex.Message}");
             throw;
         }

@@ -21,13 +21,17 @@ using Hangfire;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Configuration;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web.Http.ExceptionHandling;
 
 var builder = WebApplication.CreateBuilder(args);
 Log.Logger = new LoggerConfiguration()
@@ -78,6 +82,7 @@ builder.Services.AddStackExchangeRedisCache(options => {
     options.Configuration = "localhost:6379";
 });
 //builder.Services.AddScoped<IAuthorizationHandler, PoliciesAuthorizationHandler>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -87,6 +92,23 @@ if (app.Environment.IsDevelopment())
 {
     app.UseCors("corsapp");
 }
+app.UseExceptionHandler(appError =>
+{
+    appError.Run(async context =>
+    {
+        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        context.Response.ContentType = "application/json";
+        var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+        if (contextFeature != null)
+        {
+            await context.Response.WriteAsync(new
+            {
+                StatusCode = context.Response.StatusCode,
+                Message = "Internal Server Error."
+            }.ToString());
+        }
+    });
+});
 app.UseHangfireDashboard();
 
 //BackgroundJob.Schedule(() => Console.WriteLine("Hello"), TimeSpan.FromMinutes(1)) ;
@@ -107,8 +129,8 @@ app.UseHttpsRedirection();
 //app.UseMiddleware<JwtClaimsMiddleWare>();
 app.UseAuthentication();
 app.UseAuthorization();
+//app.UseMiddleware<GlobalExceptionHandler>();
 
 app.MapControllers();
 
 app.Run();
-

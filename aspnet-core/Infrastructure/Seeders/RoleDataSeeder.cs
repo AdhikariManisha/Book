@@ -56,6 +56,10 @@ public class RoleDataSeeder : IDataSeeder
             BookPermissions.Genres.Create,
             BookPermissions.Genres.Edit,
             BookPermissions.Genres.Delete,
+            BookPermissions.Authors.Default,
+            BookPermissions.Authors.Create,
+            BookPermissions.Authors.Edit,
+            BookPermissions.Authors.Delete,
         };
 
         var claims = await _roleManager.GetClaimsAsync(role);

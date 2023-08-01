@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { UserLoginDto } from './model';
+import { LoginService } from './login.service';
+import { Route, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -9,8 +12,9 @@ import { UserLoginDto } from './model';
 })
 export class LoginComponent {
   form: FormGroup = new FormGroup({});
-  constructor(){
+  constructor(private loginService: LoginService, private router: Router, private toastr: ToastrService ){
     this.buildfrom();
+  
   }
   
   buildfrom() {
@@ -19,13 +23,19 @@ export class LoginComponent {
       password: new FormControl("", Validators.required)
     });
   }
-
-  onSubmit() {
+  
+onSubmit() {
     const dto: UserLoginDto = {
       userName: this.form.get("userName")?.value,
       password: this.form.get("password")?.value
     }
-    console.log(this.form);
-    console.log(`UserLogin: ${JSON.stringify(dto)}`);
+    this.loginService.login(dto).subscribe((res) => {
+      localStorage.setItem("access_token", res.token);
+      this.toastr.success("Login successfully.", "SUCCESS");
+      this.router.navigate(["/"]);
+    }, (err) => {
+      console.log(err);
+      this.toastr.error(err.error.message);
+    });
   }
 }

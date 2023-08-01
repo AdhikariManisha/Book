@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core'
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthorFilter, CreateUpdateAuthorDto } from './model';
-import { PagedResultResponseDto } from '../models/PagedResultResponseDto';
 import { PagedAndSortedResultResponseDto } from '../models/PagedAndSortedResultResponseDto';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthorService {
-  apiURL = `https://localhost:7024/api/author`;
+  apiURL = `${environment.apis.url}author`;
   get = (id: number): Observable<any> => this.httpClient.get(`${this.apiURL}/${id}`);
 
   create = (dto: CreateUpdateAuthorDto) => this.httpClient.post(this.apiURL, dto);

@@ -24,6 +24,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox'
 import { GlobalErrorHandlerService } from './global-error-handler.service';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { JwtModule } from '@auth0/angular-jwt';
+
+export function tokenGetter(){
+  return localStorage.getItem("access_token");
+}
 
 @NgModule({
   declarations: [
@@ -57,7 +62,14 @@ import { NgSelectModule } from '@ng-select/ng-select';
     MatSelectModule,
     MatCheckboxModule,
     NgxDatatableModule,
-    NgSelectModule
+    NgSelectModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: ["localhost:7024"],
+        disallowedRoutes: []
+      }
+    })
   ],
   providers: [{provide: ErrorHandler, useClass: GlobalErrorHandlerService}, HttpClient, AuthorService ],
   bootstrap: [AppComponent],
