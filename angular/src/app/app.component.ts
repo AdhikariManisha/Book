@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 export class AppComponent {
   data: any;
   title = 'angular';
+  user: string = "";
   constructor(private jwtHelperService: JwtHelperService, private router: Router) {
     const token = localStorage.getItem("access_token")
     let isExpired = false;
@@ -23,10 +24,27 @@ export class AppComponent {
       if (isExpired) {
         localStorage.removeItem("access_token");
       }
+      else{
+        this.user = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+      }
     }
 
     if (!token || isExpired) {
       this.router.navigate(['/login']);
     }
+  }
+
+  logout() {
+    localStorage.removeItem("access_token");
+    this.router.navigate(['/login']);
+  }
+
+  get isUserAuthenticated() {
+    let isUserAuthenticated = false;
+    const token = localStorage.getItem("access_token")
+    if (token && !this.jwtHelperService.isTokenExpired(token)) {
+      isUserAuthenticated = true;
+    }
+    return isUserAuthenticated;
   }
 }
