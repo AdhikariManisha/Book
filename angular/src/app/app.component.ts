@@ -1,18 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TokenDto } from './login/model';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   data: any;
   title = 'angular';
   user: string = "";
-  constructor(private jwtHelperService: JwtHelperService, private router: Router) {
+  constructor(private jwtHelperService: JwtHelperService, private router: Router, private route: ActivatedRoute) {
+  }
+
+  ngOnInit(): void {
+    this.checkLogin();
+  }
+
+  checkLogin() {
     const token = localStorage.getItem("access_token")
     let isExpired = false;
     if (token) {
@@ -24,7 +31,7 @@ export class AppComponent {
       if (isExpired) {
         localStorage.removeItem("access_token");
       }
-      else{
+      else {
         this.user = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
       }
     }

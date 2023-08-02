@@ -55,19 +55,35 @@ public static class ServiceCollectionExtension
                 ValidateAudience = true,
                 ValidIssuer = configuration["JWT:Issuer"],
                 ValidAudience = configuration["JWT:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"])),
+                ValidateLifetime = true,
+                RequireExpirationTime = true,
             };
 
             options.Events = new JwtBearerEvents
             {
-                OnMessageReceived = context => {
+                OnMessageReceived = context =>
+                {
                     var accessToken = context.Request.Headers["Authorization"].FirstOrDefault()?.Replace("Bearer ", "");
-                    context.Token = accessToken; 
+                    context.Token = accessToken;
                     return Task.CompletedTask;
                 }
             };
         });
 
+        //services.ConfigureApplicationCookie(options =>
+        //{
+        //    options.ForwardDefaultSelector = ctx =>
+        //    {
+        //        string authorization = ctx.Request.Headers.Authorization;
+        //        if (!string.IsNullOrWhiteSpace(authorization) && authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            return JwtBearerDefaults.AuthenticationScheme;
+        //        }
+
+        //        return null;
+        //    };
+        //});
         services.AddAuthorization(options =>
         {
             // Here I stored necessary permissions/roles in a constant

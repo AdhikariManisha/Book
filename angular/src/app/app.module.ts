@@ -25,6 +25,7 @@ import { GlobalErrorHandlerService } from './global-error-handler.service';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { JwtModule } from '@auth0/angular-jwt';
+import { AuthGuardService } from './guards/auth-guard.service';
 
 export function tokenGetter(){
   return localStorage.getItem("access_token");
@@ -71,7 +72,7 @@ export function tokenGetter(){
       }
     })
   ],
-  providers: [{provide: ErrorHandler, useClass: GlobalErrorHandlerService}, HttpClient, AuthorService ],
+  providers: [{provide: ErrorHandler, useClass: GlobalErrorHandlerService}, HttpClient, AuthorService, AuthGuardService],
   bootstrap: [AppComponent],
   entryComponents:[ConfirmationDialog]
 })

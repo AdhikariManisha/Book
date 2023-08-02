@@ -128,6 +128,7 @@ app.UseHangfireDashboard();
 app.UseHttpsRedirection();
 //app.UseMiddleware<JwtClaimsMiddleWare>();
 app.UseAuthentication();
+//app.UseJwtTokenMiddleware();
 app.UseAuthorization();
 //app.UseMiddleware<GlobalExceptionHandler>();
 
