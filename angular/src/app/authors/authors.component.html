@@ -5,12 +5,12 @@
                 <h5 class="card-title">Filter</h5>
             </div>
             <div class="col-4 text-end">
-                <i class="fa fa-filter" (click)="toggleFilter()"></i>
+                <i class="bi bi-funnel" (click)="toggleFilter()"></i>
             </div>
         </div>
     </div>
     <div class="card-body row" *ngIf="showFilter">
-        <div class="col col-md-3 col-sm-6">
+        <div class="col-md-3 col-sm-6">
             <mat-form-field>
                 <mat-label for="filter-author-name">Choose a date range</mat-label>
                 <mat-date-range-input [rangePicker]="picker">
@@ -18,18 +18,18 @@
                     <input matEndDate placeholder="End Date" [(ngModel)]="toDate">
                 </mat-date-range-input>
                 <mat-hint>MM/DD/YYYY - MM/DD/YYYY</mat-hint>
-                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-date-range-picker #picker>
                 </mat-date-range-picker>
             </mat-form-field>
         </div>
 
-        <mat-form-field class="col col-md-2 col-sm-4">
+        <mat-form-field class="col-md-2 col-sm-4">
             <mat-label for="filter-author-name">Author Name</mat-label>
             <input matInput id="filter-author-name" type="text" [(ngModel)]="filter.authorName">
         </mat-form-field>
-        
-        <mat-form-field class="col col-md-2 col-sm-4">
+
+        <mat-form-field class="col-md-2 col-sm-4">
             <mat-label for="filter-status">Status</mat-label>
             <mat-select id="filter-status" [(ngModel)]="filter.status">
                 <mat-option value="">All</mat-option>
@@ -60,7 +60,6 @@
     </div>
 </div>
 <br>
-
 <!-- <div class="card mx-2">
     <div class="card-body">
         <table class="table" matSort (matSortChange)="sortData($event)">

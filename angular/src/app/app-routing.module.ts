@@ -9,6 +9,7 @@ const routes: Routes = [
   {path:'authors', component: AuthorsComponent, canActivate: [AuthGuardService]},
   { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule) },
   { path: '', loadChildren: () => import('./home/home.module').then(m => m.HomeModule), canActivate: [AuthGuardService] },
+  { path: 'register', loadChildren: () => import('./register/register.module').then(m => m.RegisterModule) },
 ];
 
 @NgModule({

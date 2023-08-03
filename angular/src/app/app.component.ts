@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { TokenDto } from './login/model';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { ActivatedRoute, Router } from '@angular/router';
 
