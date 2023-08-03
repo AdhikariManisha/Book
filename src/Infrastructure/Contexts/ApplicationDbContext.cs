@@ -1,4 +1,4 @@
-﻿using Book.Domain.Entities;
+using Book.Domain.Entities;
 using Book.Domain.Entities.Identity;
 using Book.Shared.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -11,13 +11,14 @@ namespace Book.Infrastructure.Contexts
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> option): base(option)
         { 
         }
+        #region Entities
         public DbSet<Author> Authors { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Book.Domain.Entities.Book> Books { get; set; }
         public DbSet<BookAuthor> BookAuthors { get; set; }
         public DbSet<BookGenre> BookGenres { get; set; }
         public DbSet<BookIssue> BookIssues { get; set; }
-        public DbSet<Department> Departments { get; set; }
+        #endregion entities
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
@@ -37,6 +38,8 @@ namespace Book.Infrastructure.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<BookAuthor>()
                 .HasOne(s => s.Book)
                 .WithMany()
@@ -59,7 +62,16 @@ namespace Book.Infrastructure.Contexts
                     }
                 );
 
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<BookUser>(s =>
+            {
+                s.ToTable(name: "Users");
+            });
+
+            modelBuilder.Entity<BookRole>(s =>
+            {
+                s.ToTable(name: "Roles");
+            });
+
         }
     }
 }

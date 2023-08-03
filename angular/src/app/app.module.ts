@@ -10,10 +10,20 @@ import { AuthorService } from './authors/author.service';
 import { BooksComponent } from './books/books.component';
 import { AuthorsComponent } from './authors/authors.component';
 import { ToastrModule } from 'ngx-toastr';
-import {MatDialogRef, MatDialogModule} from '@angular/material/dialog'
-import{ MatButtonModule} from '@angular/material/button'
-import{ MatCardModule} from '@angular/material/card'
+import { MatDialogRef, MatDialogModule} from '@angular/material/dialog'
+import { MatInputModule} from '@angular/material/input'
+import { MatButtonModule} from '@angular/material/button'
+import { MatCardModule} from '@angular/material/card'
+import { MatPaginatorModule } from '@angular/material/paginator'
+import { MatSortModule } from '@angular/material/sort'
+import { MatTableModule } from '@angular/material/table'
+import { MatDatepickerModule } from '@angular/material/datepicker'
+import { MatSelectModule } from '@angular/material/select'
+import { MatNativeDateModule } from '@angular/material/core'
+import { MatCheckboxModule } from '@angular/material/checkbox'
 import { GlobalErrorHandlerService } from './global-error-handler.service';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @NgModule({
   declarations: [
@@ -33,11 +43,21 @@ import { GlobalErrorHandlerService } from './global-error-handler.service';
       timeOut: 5000,
       positionClass: 'toast-bottom-right',
       closeButton: true,
-      preventDuplicates: true
+      preventDuplicates: true,
     }),
+    MatInputModule,
     MatDialogModule,
     MatButtonModule,
-    MatCardModule
+    MatCardModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatTableModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    NgxDatatableModule,
+    NgSelectModule
   ],
   providers: [{provide: ErrorHandler, useClass: GlobalErrorHandlerService}, HttpClient, AuthorService ],
   bootstrap: [AppComponent],

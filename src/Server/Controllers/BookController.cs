@@ -69,4 +69,10 @@ public class BookController : ControllerBase
 
         return Ok(books);
     }
+    [HttpGet("IssueBook")]
+    public async Task<ActionResult> GetIssueBook(int id) {
+        var dto = await _bookService.GetAsync(id);
+
+        return Ok(dto);
+    }
 }

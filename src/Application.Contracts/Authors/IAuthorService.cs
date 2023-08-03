@@ -1,4 +1,6 @@
-﻿namespace Book.Authors;
+﻿using Book.Shared.Dtos;
+
+namespace Book.Authors;
 public interface IAuthorService
 {
     public Task<AuthorDto> GetAsync(int id);
@@ -8,5 +10,5 @@ public interface IAuthorService
     public Task<bool> UpdateAsync(CreateUpdateAuthorDto input);
     public Task<bool> DeleteAsync(int id);
     public Task DeleteManyAsync(List<int> ids);
-    public Task<List<AuthorDto>> GetListByFilterAsync(AuthorFilter filter);
+    public Task<PagedResultDto<AuthorDto>> GetListByFilterAsync(PagedAndSortedResultRequestDto input, AuthorFilter filter);
 }

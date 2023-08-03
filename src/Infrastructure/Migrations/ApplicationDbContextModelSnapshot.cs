@@ -58,7 +58,7 @@ namespace Book.Infrastructure.Migrations
                         {
                             Id = 1,
                             AuthorName = "J. K. Rowling",
-                            CreatedDate = new DateTime(2022, 12, 6, 8, 9, 52, 211, DateTimeKind.Local).AddTicks(2575),
+                            CreatedDate = new DateTime(2023, 7, 23, 9, 1, 26, 815, DateTimeKind.Local).AddTicks(1946),
                             Status = false
                         });
                 });
@@ -232,38 +232,6 @@ namespace Book.Infrastructure.Migrations
                     b.ToTable("BookIssues");
                 });
 
-            modelBuilder.Entity("Book.Domain.Entities.Department", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DepartmentName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Faculty")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Departments");
-                });
-
             modelBuilder.Entity("Book.Domain.Entities.Genre", b =>
                 {
                     b.Property<int>("Id")
@@ -323,7 +291,7 @@ namespace Book.Infrastructure.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("Book.Domain.Entities.Identity.BookUser", b =>
@@ -402,7 +370,7 @@ namespace Book.Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

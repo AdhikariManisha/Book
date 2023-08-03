@@ -3,8 +3,13 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialog } from '../confirmation-dialog/confirmation-dialog';
 import { AuthorService, } from './author.service';
-import { CreateUpdateAuthorDto, AuthorDto } from './model';
+import { CreateUpdateAuthorDto, AuthorDto, AuthorFilter } from './model';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog'
+import { PagedResultResponseDto } from '../models/PagedResultResponseDto';
+import { ResponseModal } from '../models/ResponseModel';
+import { PagedResultDto } from '../models/PageResultDto';
+import { MatSort, Sort } from '@angular/material/sort';
+import { PagedAndSortedResultResponseDto } from '../models/PagedAndSortedResultResponseDto';
 
 @Component({
   selector: 'app-authors',
@@ -13,23 +18,37 @@ import { MatDialogRef, MatDialog } from '@angular/material/dialog'
 })
 export class AuthorsComponent {
   form: FormGroup = new FormGroup({});
-  data: AuthorDto[] = [];
   selected = {} as AuthorDto;
   dialogRef = {} as MatDialogRef<ConfirmationDialog>;
   isModalOpen = false as Boolean;
   selectedIds: number[] = [];
   checkBoxAll: boolean = false;
-  filter = {} as AuthorDto;
-  showFilter: boolean = false;
+  filter = {} as AuthorFilter;
+  showFilter: boolean = true;
+  page = {
+    skipCount : 0,
+    takeCount : 5,
+    sorting: ""
+  } as PagedAndSortedResultResponseDto;
 
+  data = {
+    totalCount: 0,
+    items: ([] as AuthorDto[])
+  } as PagedResultDto<AuthorDto>;
+
+  fromDate?: Date;
+  toDate?: Date;
+  
   constructor(private authorService: AuthorService,
     private toastr: ToastrService,
     private dialog: MatDialog
   ) {
-    this.getList();
+    this.search();
+    this.buildForm();
   }
 
   buildForm() {
+    this.form.reset();
     this.form = new FormGroup({
       authorName: new FormControl(this.selected.authorName, Validators.required),
       status: new FormControl(this.selected.status ?? false)
@@ -47,8 +66,7 @@ export class AuthorsComponent {
     request.subscribe(s => {
       const msg = this.selected.id ? "Author updated successfully." : "Author saved successfully.";
       this.toastr.success(msg);
-      this.getList();
-      this.form.reset();
+      this.search();
       this.selected = {} as AuthorDto;
       this.buildForm();
       this.isModalOpen = false;
@@ -56,20 +74,8 @@ export class AuthorsComponent {
     );
   }
 
-  getList() {
-    this.authorService.getList().subscribe((s: AuthorDto[]) => {
-      this.data = s;
-    })
-  }
-
-
-  getListByFilter() {
-    this.authorService.getListByFilter(this.filter).subscribe((s: AuthorDto[]) => {
-      this.data = s;
-    })
-  }
-
   edit(id?: number) {
+    this.isModalOpen = true;
     this.authorService.get(id as number).subscribe(d => {
       this.selected = d;
       this.buildForm();
@@ -85,7 +91,7 @@ export class AuthorsComponent {
       if (result) {
         this.authorService.delete(id as number).subscribe(d => {
           this.toastr.success("Author deleted successfully", "Deleted", { positionClass: 'toast-top-right' });
-          this.getList();
+          this.search();
         });
       }
       this.dialogRef = {} as MatDialogRef<ConfirmationDialog>;
@@ -99,6 +105,8 @@ export class AuthorsComponent {
 
   closeModal() {
     this.isModalOpen = false;
+    this.selected = {} as AuthorDto;
+    this.buildForm();
   }
   deleteMany() {
     this.dialogRef = this.dialog.open(ConfirmationDialog, {
@@ -116,7 +124,7 @@ export class AuthorsComponent {
           this.toastr.success("Deleted");
           this.selectedIds = [];
           this.checkBoxAll = false;
-          this.getList();
+          this.search();
         });
       }
       this.dialogRef = {} as MatDialogRef<ConfirmationDialog>;
@@ -126,7 +134,7 @@ export class AuthorsComponent {
   onSelectAll() {
     this.selectedIds = [];
     if (this.checkBoxAll) {
-      this.data.forEach(s => {
+      this.data.items.forEach(s => {
         this.selectedIds.push((s.id as number));
       });
     }
@@ -149,11 +157,42 @@ export class AuthorsComponent {
   }
   
   search(){
-    this.getListByFilter();
+    this.filter.fromDate = this.fromDate == null ? "" : this.fromDate.toDateString();
+    this.filter.toDate = this.toDate == null ? "" : this.toDate.toDateString();
+    this.authorService.getListByFilter(this.page, this.filter).subscribe((s: ResponseModal<PagedResultDto<AuthorDto>>) => {
+      this.data = s.data;
+    })
   }
 
   toggleFilter(){
     this.showFilter = !this.showFilter;
+  }
+
+  resetFilters(){
+    this.filter = {} as AuthorDto;
+  }
+  // rows = [
+  //   {authorName: 'John Doe', age: 30, gender: 'M'},
+  //   {authorName: 'Jane Doe', age: 35, gender: 'F'},
+  //   {authorName: 'Bob Smith', age: 40, gender: 'M'}
+  // ];
+  displayedColumns: string[] = ["id", "authorName", "status", "createdDate", "actions"];
+  // columns = [
+  //   {name: 'Person Name', prop: 'name'},
+  //   {prop: 'age'},
+  //   {prop: 'gender'},
+  // ]
+
+  changePage(event: any){
+    this.page.takeCount = event.pageSize;
+    this.page.skipCount = event.pageIndex * this.page.takeCount;
+    this.search();
+  }
+
+  sortData(sortState: Sort){
+    this.page.sorting = `${sortState.active} ${sortState.direction}`;
+    console.log(sortState);
+    this.search();
   }
 }
 

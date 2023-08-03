@@ -11,6 +11,12 @@ using Microsoft.EntityFrameworkCore;
 using Book.Application.Contracts.Services;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
+using Book.Shared.Exceptions;
+using Microsoft.Extensions.Caching.Distributed;
+using Book.Shared.Constants;
+using System.Text.Json;
+using Microsoft.Extensions.Options;
+using Book.Shared.Options;
 
 namespace Book.Application.Books;
 public class BookService : IBookService
@@ -23,6 +29,8 @@ public class BookService : IBookService
     private readonly IMapper _mapper;
     private readonly IUnitOfWork<int> _unitOfWork;
     private readonly IConfiguration _configuration;
+    private readonly IDistributedCache _cache;
+    private readonly CacheOption _cacheOption;
 
     public BookService(
         IRepository<Domain.Entities.Book, int> bookRepository,
@@ -32,7 +40,9 @@ public class BookService : IBookService
         IRepository<Domain.Entities.Genre, int> genreRepository,
         IMapper mapper,
         IUnitOfWork<int> unitOfWork,
-        IConfiguration configuration
+        IConfiguration configuration,
+        IDistributedCache cache,
+        IOptions<CacheOption> cacheOption
         )
     {
         _bookRepository = bookRepository;
@@ -43,6 +53,8 @@ public class BookService : IBookService
         _mapper = mapper;
         _unitOfWork = unitOfWork;
         _configuration = configuration;
+        _cache = cache;
+        _cacheOption = cacheOption.Value;
     }
 
     public async Task<bool> CreateAsync(CreateUpdateBookDto dto)
@@ -179,10 +191,29 @@ public class BookService : IBookService
 
     public async Task<List<BookDto>> GetListAsync()
     {
+        //var cacheData = await _cache.GetAsync(CacheKey.Book.GetAll);
+        //var dtos = JsonSerializer
         var books = await _bookRepository.GetListAsync();
         var dtos = _mapper.Map<List<BookDto>>(books);
-
+        var dataToCacheAsString = JsonSerializer.Serialize(dtos);
+        var dataToCache = Encoding.UTF8.GetBytes(dataToCacheAsString);
+        var options = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTimeOffset.Now.AddMinutes(_cacheOption.BookGetListAbsoluteExpirationInMins));
+        await _cache.SetAsync(CacheKey.Book.GetAll, dataToCache, options);
         return dtos;
+    }
+
+    public async Task IssueBook(int id)
+    {
+        var book = await _bookRepository.GetAsync(id);
+        if (book == null)
+        {
+            throw new ValidationException("Book Not Found");
+        }
+
+        book.IssueDate = DateTime.Now;
+        book.IssueTo = 1;
+
+        await _bookRepository.UpdateAsync(id, book);
     }
 
     public async Task<bool> UpdateAsync(int id, CreateUpdateBookDto dto)

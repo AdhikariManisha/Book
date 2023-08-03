@@ -10,21 +10,40 @@
         </div>
     </div>
     <div class="card-body row" *ngIf="showFilter">
-        <div class="col col-md-2 col-sm-4">
-            <label for="filter-author-name">Author Name</label>
-            <input id="filter-author-name" type="text" class="form-control" [(ngModel)]="filter.authorName">
+        <div class="col col-md-3 col-sm-6">
+            <mat-form-field>
+                <mat-label for="filter-author-name">Choose a date range</mat-label>
+                <mat-date-range-input [rangePicker]="picker">
+                    <input matStartDate placeholder="Start Date" [(ngModel)]="fromDate">
+                    <input matEndDate placeholder="End Date" [(ngModel)]="toDate">
+                </mat-date-range-input>
+                <mat-hint>MM/DD/YYYY - MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker>
+                </mat-date-range-picker>
+            </mat-form-field>
         </div>
-        <div class="col col-md-2 col-sm-4">
-            <label for="filter-status">Status</label>
-            <select id="filter-status" class="form-control" [(ngModel)]="filter.status">
-                <option value="">All</option>
-                <option value="true">Enabled</option>
-                <option value="false">Disabled</option>
-            </select>
-        </div>
-        <div class="col-3">
+
+        <mat-form-field class="col col-md-2 col-sm-4">
+            <mat-label for="filter-author-name">Author Name</mat-label>
+            <input matInput id="filter-author-name" type="text" [(ngModel)]="filter.authorName">
+        </mat-form-field>
+        
+        <mat-form-field class="col col-md-2 col-sm-4">
+            <mat-label for="filter-status">Status</mat-label>
+            <mat-select id="filter-status" [(ngModel)]="filter.status">
+                <mat-option value="">All</mat-option>
+                <mat-option value="true">Enabled</mat-option>
+                <mat-option value="false">Disabled</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div class="col-1">
             <br>
             <button class="btn btn-primary" type="button" (click)="search()">Search</button>
+        </div>
+        <div class="col-1">
+            <br>
+            <button class="btn btn-warning" type="button" (click)="resetFilters()">Reset</button>
         </div>
     </div>
 </div>
@@ -34,16 +53,17 @@
     <div class="card-body row">
         <div class="col-auto">
             <button class="btn btn-primary" type="button" (click)="create()">Create</button>
-            </div>
+        </div>
         <div class="col-auto">
             <button class="btn btn-danger mx-3" type="button" (click)="deleteMany()">Delete</button>
         </div>
     </div>
 </div>
 <br>
-<div class="card mx-2">
+
+<!-- <div class="card mx-2">
     <div class="card-body">
-        <table class="table">
+        <table class="table" matSort (matSortChange)="sortData($event)">
             <thead>
                 <tr>
                     <input type="checkbox" [(ngModel)]="checkBoxAll" (ngModelChange)="onSelectAll()">
@@ -54,39 +74,42 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let row of data">
+                <tr *ngFor="let row of data.items">
                     <input class="checkbox-author" type="checkbox" (change)="onSelect($event.target, row.id)">
                     <td>{{row.id}}</td>
                     <td>{{row.authorName}}</td>
-                    <td>{{row.status}}</td>
+                    <td>{{row.status?"Enabled":"Disabled"}}</td>
                     <td><button class="btn btn-secondary mx-1" type="button" (click)="edit(row.id)">Edit</button>
                         <button class="btn btn-danger" type="button" (click)="delete(row.id)">Delete</button>
                     </td>
                 </tr>
             </tbody>
         </table>
+        <mat-paginator [length]="data.totalCount"
+                    [pageSize]="page.takeCount"
+                    [showFirstLastButtons]="true"
+                    [pageSizeOptions]="[5, 10, 25, 100]"
+                    (page)="changePage($event)"></mat-paginator>
     </div>
-</div>
+</div>  -->
 
 <div *ngIf="isModalOpen" class="modal show d-block modal-md" id="modalCreateAuthor" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class='modal-header'>
-                <h4 class='modal-title'>Create</h4>
+                <h4 class='modal-title'>{{selected.id?'Update':'Create'}}</h4>
                 <button class="btn btn-close" type="button" (click)="closeModal()"></button>
             </div>
             <form [formGroup]="form" (ngSubmit)="save()">
                 <div class="modal-body">
                     <div class="card m-2">
                         <div class="card-body row">
-                            <div class="col-12">
-                                <label for="author-name">Author Name</label>
-                                <input id="author-name" type="text" class="form-control" formControlName="authorName">
-                            </div>
-                            <div class="col-12">
-                                <label for="author-name">Status</label><br>
-                                <input type="checkbox" formControlName="status">
-                            </div>
+                            <mat-form-field class="col-12">
+                                <mat-label for="author-name">Author Name</mat-label>
+                                <input matInput id="author-name" type="text" formControlName="authorName" />
+                            </mat-form-field>
+                            <mat-checkbox id="status" formControlName="status">Status
+                            </mat-checkbox>
                         </div>
                     </div>
                 </div>
@@ -100,3 +123,82 @@
         </div>
     </div>
 </div>
+<!-- 
+<div class="card mx-2">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <ngx-datatable class="material striped" [headerHeight]="50" rowHeight="auto" 
+                    columnMode="force" [scrollbarH]="true" (page)="setPage($event)"
+                    [rows]="data.items"  [count]="data.totalCount" [offset]="page.skipCount"
+                    [limit]="page.takeCount" [externalPaging]="true">
+                    <ngx-datatable-column prop="authorName">
+                        <ng-template let-value="value">
+                            {{value}}
+                        </ng-template>
+                    </ngx-datatable-column>
+
+                    <ngx-datatable-column prop="status">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            {{row.status?'Enabled':'Disabled'}}
+                        </ng-template>
+                    </ngx-datatable-column>
+
+                    <ngx-datatable-column prop="createdDate">
+                        <ng-template let-value="value" ngx-datatable-cell-template>
+                            {{value | date:"yyyy-MM-dd HH:MM a"}}
+                        </ng-template>
+                    </ngx-datatable-column>
+
+                    <ngx-datatable-column prop="updatedDate">
+                        <ng-template let-value="value" ngx-datatable-cell-template>
+                            {{value | date:"short"}}
+                        </ng-template>
+                    </ngx-datatable-column>
+
+                    <ngx-datatable-column [name]="'Actions'" [sortable]="false">
+                    </ngx-datatable-column>
+                </ngx-datatable>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<div class="card mx-2">
+    <div class="card-body">
+        <mat-table [dataSource]="data.items" matSort (matSortChange)="sortData($event)">
+            <ng-container matColumnDef="id">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="id">Id</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.id}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="authorName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="authorName">Author Name</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.authorName}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="status">Status</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.status?"Enabled":"Disabled"}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="createdDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate">Created Date</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.createdDate | date : "short"}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <button class="btn btn-secondary mx-1" type="button" (click)="edit(row.id)">Edit</button>
+                    <button class="btn btn-danger" type="button" (click)="delete(row.id)">Delete</button>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+        </mat-table>
+        <mat-paginator [length]="data.totalCount" [pageSize]="page.takeCount" [showFirstLastButtons]="true"
+            [pageSizeOptions]="[5, 10, 25, 100]" (page)="changePage($event)"></mat-paginator>
+    </div>
+</div>
+

@@ -1,7 +1,15 @@
-﻿using Book.Shared.Exceptions;
+﻿using Book.Application.Contracts.Repositories;
+using Book.Domain.Entities;
+using Book.Shared.Constants;
+using Book.Shared.Dtos;
+using Book.Shared.Exceptions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -10,10 +18,14 @@ namespace Book.Authors;
 public class AuthorService : IAuthorService
 {
     private readonly IAuthorRepository _authorRepository;
+    private readonly IRepository<Author, int> _authorRepo;
+    private readonly IMemoryCache _memoryCache;
 
-    public AuthorService(IAuthorRepository authorRepository)
+    public AuthorService(IAuthorRepository authorRepository, IRepository<Author, int> authorRepo, IMemoryCache memoryCache)
     {
         _authorRepository = authorRepository;
+        _authorRepo = authorRepo;
+        _memoryCache = memoryCache;
     }
 
     public async Task<bool> CreateAsync(CreateUpdateAuthorDto input)
@@ -37,12 +49,29 @@ public class AuthorService : IAuthorService
         }
 
         await _authorRepository.DeleteAsync(id);
+        _memoryCache.Remove(CacheKey.Author.GetAll);
+        Console.WriteLine("Remove Cache");
         return true;
     }
 
     public async Task<AuthorDto> GetAsync(int id)
     {
-       var dto = await _authorRepository.GetAsync(id);
+        AuthorDto dto;
+        var isCache = _memoryCache.TryGetValue($"{CacheKey.Author.Get}:{id}", out dto);
+        if (!isCache)
+        {
+            dto = await _authorRepository.GetAsync(id);
+            var cacheOption = new MemoryCacheEntryOptions
+            {
+                AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1),
+            };
+            _memoryCache.Set($"{CacheKey.Author.Get}:{id}", dto, cacheOption);
+            Console.WriteLine("Get Data from db");
+        }
+        else
+        {
+            Console.WriteLine("Get Data from cache");
+        }
         return dto;
     }
 
@@ -54,14 +83,35 @@ public class AuthorService : IAuthorService
 
     public async Task<List<AuthorDto>> GetListAsync()
     {
-        var dtos = await _authorRepository.GetListAsync();
+        var dtos = (List<AuthorDto>)_memoryCache.Get(CacheKey.Author.GetAll);
+        if (dtos == null)
+        {
+            dtos = await _authorRepository.GetListAsync();
+            var cacheOption = new MemoryCacheEntryOptions
+            {
+                AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1),
+            };
+            cacheOption.RegisterPostEvictionCallback((key, value, reason, substate) =>
+            {
+                Console.WriteLine("Cache expired!");
+
+            });
+            _memoryCache.Set(CacheKey.Author.GetAll, dtos, cacheOption);
+            Console.WriteLine("Get Data from db");
+        }
+        else
+        {
+            Console.WriteLine("Get Data from cache");
+        }
+
         return dtos;
     }
 
     public async Task<bool> UpdateAsync(CreateUpdateAuthorDto input)
     {
         var authorExits = await _authorRepository.GetAsync(input.Id);
-        if (authorExits == null) {
+        if (authorExits == null)
+        {
             throw new ValidationException("Author not found.");
         }
 
@@ -87,10 +137,39 @@ public class AuthorService : IAuthorService
         await _authorRepository.DeleteManyAsync(ids);
     }
 
-    public  async Task<List<AuthorDto>> GetListByFilterAsync(AuthorFilter filter)
+    public async Task<PagedResultDto<AuthorDto>> GetListByFilterAsync(PagedAndSortedResultRequestDto input, AuthorFilter filter)
     {
-        var dtos = await _authorRepository.GetListByFilterAsync(filter);
-        return dtos;
+        // var dtos = await _authorRepository.GetListByFilterAsync(filter);
+
+        if (string.IsNullOrWhiteSpace(input.Sorting))
+        {
+            input.Sorting = $"{nameof(AuthorDto.CreatedDate)} desc";
+        }
+
+        var queryable = _authorRepo.Entities.Select(s => new AuthorDto
+        {
+            Id = s.Id,
+            AuthorName = s.AuthorName,
+            Status = s.Status,
+            CreatedBy = s.CreatedBy,
+            CreatedDate = s.CreatedDate,
+            UpdatedBy = s.UpdatedBy,
+            UpdatedDate = s.UpdatedDate
+        })
+        .Where(s => (string.IsNullOrWhiteSpace(filter.AuthorName) || s.AuthorName.Contains(filter.AuthorName))
+            && (filter.Status == null || s.Status == filter.Status))
+        .Where(s => !filter.FromDate.HasValue || s.CreatedDate.Date >= filter.FromDate.Value.Date)
+        .Where(s => !filter.ToDate.HasValue || s.CreatedDate.Date <= filter.ToDate.Value.Date)
+        .OrderBy(input.Sorting);
+
+        var totalCount = await queryable.LongCountAsync();
+        var dtos = await queryable
+                    .Skip(input.SkipCount)
+                    .Take(input.TakeCount)
+                    .ToListAsync();
+        var response = new PagedResultDto<AuthorDto>(totalCount, dtos);
+
+        return response;
     }
 }
 
