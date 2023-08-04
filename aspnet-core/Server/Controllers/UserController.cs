@@ -42,6 +42,12 @@ public class UserController : ControllerBase
         var isSuccess = await _userService.ChangePasswordAsync(dto);
         return Ok(isSuccess);
     }
+    [HttpDelete("id")]
+    public async Task<ActionResult> DeleteAsync(int id)
+    {
+        var response = await _userService.DeleteAsync(id);
+        return Ok(response);
+
+    }
+
 }
-
-

@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 namespace Book.Application.Contracts.Users;
 public interface IUserService
 {
-    Task<bool> RegisterAsync(UserRegisterDto dto);
-    Task<TokenDto> LoginAsync(UserLoginDto dto);
-    Task<bool> ForgetPasswordAsync(UserForgetPasswordDto dto);
-    Task<bool> ChangePasswordAsync(UserChangePasswordDto dto);
-    Task<List<UserDto>> GetListAsync();
+    public Task<bool> RegisterAsync(UserRegisterDto dto);
+    public Task<TokenDto> LoginAsync(UserLoginDto dto);
+    public Task<bool> ForgetPasswordAsync(UserForgetPasswordDto dto);
+    public Task<bool> ChangePasswordAsync(UserChangePasswordDto dto);
+    public Task<List<UserDto>> GetListAsync();
+    public Task<UserDto> GetAsync(int id); 
+    public Task<bool> UpdateAsync(UserDto input);
+    public Task<bool> DeleteAsync(int id);
 }

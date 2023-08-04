@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.ExceptionServices;
 using System.Security.Claims;
 using System.Text;
 
@@ -57,7 +58,8 @@ public class UserService : IUserService
     {
         throw new NotImplementedException();
     }
-    
+
+  
     public async Task<List<UserDto>> GetListAsync()
     {
         List<UserDto> dtoUsers = new();
@@ -172,5 +174,72 @@ public class UserService : IUserService
         await _userManager.AddToRoleAsync(user, Roles.User.ToString());
 
         return true;
+    }
+  
+    public async Task<UserDto> GetAsync(int id )
+    {
+        try
+        {
+            _logger.LogInformation("UserService :: GetAsync :: Started");
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                _logger.LogInformation($"UserService :: GetAsync :: Ended Not Found");
+            }
+            var userDto = _mapper.Map<UserDto>(user);
+            _logger.LogInformation($"UserService :: GetAsync :: Ended");
+
+            return userDto;
+        }
+        catch (Exception ex) {
+            _logger.LogInformation($"UserService :: GetAsync :: Exception :: {ex.Message}");
+            throw;
+        }
+    }
+
+    public async Task<bool> UpdateAsync(UserDto user)
+    {
+        try
+        {
+            _logger.LogInformation("UserService ::  UpdateAsyn :: Started");
+            //var user = await _userManager.FindByIdAsync(id.ToString());
+            //if (user == null)
+            //{
+            //    _logger.LogInformation($"UserService :: GetAsync :: Ended Not Found");
+            //}
+            //var userDto = _mapper.Map<UserDto>(user);
+            //_logger.LogInformation($"UserService :: GetAsync :: Ended");
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation($"UserService :: GetAsync :: Exception :: {ex.Message}");
+            throw;
+        }
+    }
+
+    public async Task<bool> DeleteAsync(int id)
+    {
+        try
+        {
+            _logger.LogInformation("UserService :: DeleteAsync :: Started");
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                var msg = "User Not Found";
+                _logger.LogInformation($"UserService :: DeleteAsync :: {msg}");
+                throw new Exception(msg);
+            }
+            await _userManager.DeleteAsync(user);
+
+            _logger.LogInformation("UserService ::DeleteAsync :: Ended");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation($"UserService :: DeleteAsync :: Exception :: {ex.Message}");
+            throw;
+        }
     }
 }
