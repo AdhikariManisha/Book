@@ -49,5 +49,18 @@ public class UserController : ControllerBase
         return Ok(response);
 
     }
+    [HttpGet ("id")]
+    public async Task<ActionResult> GetAsync(int id)
+    { 
+    var response = await _userService.GetAsync(id);
+        return Ok(response);
+    
+    }
+    [HttpPut("id")]
+    public async Task<ActionResult> UpdateAsync(int id, UserDto dto)
+    {
+        var response = await _userService.UpdateAsync(id, dto);
+        return Ok(response);
+    }
 
 }

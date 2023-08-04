@@ -22,6 +22,6 @@ public class BookApplicationAutoMapperProfile: Profile
         CreateMap<ReturnBookIssueDto, BookIssue>();
 
         CreateMap<UserRegisterDto, BookUser>();
-        CreateMap<BookUser, UserDto>();
+        CreateMap<BookUser, UserDto>().ReverseMap();
     }
 }

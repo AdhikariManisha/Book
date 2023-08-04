@@ -13,6 +13,6 @@ public interface IUserService
     public Task<bool> ChangePasswordAsync(UserChangePasswordDto dto);
     public Task<List<UserDto>> GetListAsync();
     public Task<UserDto> GetAsync(int id); 
-    public Task<bool> UpdateAsync(UserDto input);
+    public Task<bool> UpdateAsync(int id, UserDto input);
     public Task<bool> DeleteAsync(int id);
 }

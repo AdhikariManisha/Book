@@ -48,7 +48,7 @@ public class UserService : IUserService
     public async Task<bool> ChangePasswordAsync(UserChangePasswordDto dto)
     {
         var connectionString = _configuration.GetConnectionString("DefaultConnection");
-        var sql = "select * from AspNetUsers";
+        var sql = "select * from Users";
         using var conn = new SqlConnection(connectionString);
         var dtoUsers = (await conn.QueryAsync<UserDto>(sql)).ToList();
         return true;
@@ -65,7 +65,7 @@ public class UserService : IUserService
         List<UserDto> dtoUsers = new();
 
         var connectionString = _configuration.GetConnectionString("DefaultConnection");
-        var sql = "select * from AspNetUsers";
+        var sql = "select * from Users";
 
         using var conn = new SqlConnection(connectionString);
         //await conn.OpenAsync();
@@ -197,27 +197,33 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<bool> UpdateAsync(UserDto user)
+
+    public async Task<bool> UpdateAsync(int id, UserDto userDto)
     {
         try
         {
-            _logger.LogInformation("UserService ::  UpdateAsyn :: Started");
-            //var user = await _userManager.FindByIdAsync(id.ToString());
-            //if (user == null)
-            //{
-            //    _logger.LogInformation($"UserService :: GetAsync :: Ended Not Found");
-            //}
-            //var userDto = _mapper.Map<UserDto>(user);
-            //_logger.LogInformation($"UserService :: GetAsync :: Ended");
+            _logger.LogInformation("UserService :: UpdateAsync :: Started");
 
-            return true;
-        }
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                var msg = "User Not Found";
+                _logger.LogInformation($"UserService :: UpdateAsync ::{msg}");
+                throw new Exception(msg); 
+            }
+             _mapper.Map(userDto, user);
+            await _userManager.UpdateAsync(user);
+            _logger.LogInformation("UserService :: UpdateAsync :: User updated successfully");
+
+            return true; 
+              }
         catch (Exception ex)
         {
-            _logger.LogInformation($"UserService :: GetAsync :: Exception :: {ex.Message}");
-            throw;
+            _logger.LogError($"UserService :: UpdateAsync :: Exception :: {ex.Message}");
+            throw; 
         }
     }
+
 
     public async Task<bool> DeleteAsync(int id)
     {
