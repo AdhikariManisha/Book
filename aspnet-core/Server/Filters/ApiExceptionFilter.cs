@@ -1,7 +1,7 @@
-﻿using Book.Shared.Exceptions;
+﻿using Book.Shared.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace Book.Server.Filters;
 
@@ -9,13 +9,15 @@ public class ApiExceptionFilter : ExceptionFilterAttribute
 {
     public override void OnException(ExceptionContext context)
     {
-        var msg = "internal server error";
+        var response = new ResponseModel<object>(false);
+        var validationErrors = new List<ValidationResult> { new ValidationResult("internal server error") };
 
-        if (context.Exception is ValidationException)
+        if (context.Exception is Shared.Exceptions.ValidationException msg)
         {
-            msg = context.Exception.Message;
+            validationErrors = msg.ValidationErrors;
         }
-        
-        context.Result = new BadRequestObjectResult(new { Message = msg });
+
+        response.Errors = validationErrors;
+        context.Result = new BadRequestObjectResult(response);
     }
 }

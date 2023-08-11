@@ -2,17 +2,10 @@
 using Book.Domain.Entities;
 using Book.Shared.Constants;
 using Book.Shared.Dtos;
-using Book.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Caching.Memory;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel.DataAnnotations;
 using System.Linq.Dynamic.Core;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Book.Authors;
 public class AuthorService : IAuthorService

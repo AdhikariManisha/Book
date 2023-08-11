@@ -1,4 +1,4 @@
-import { BaseEntityDto } from "../model";
+import { BaseEntityDto } from "../models/model";
 
 export interface CreateUpdateBookDto {
     id? : number;

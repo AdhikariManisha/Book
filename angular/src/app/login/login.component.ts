@@ -33,9 +33,7 @@ onSubmit() {
       localStorage.setItem("access_token", res.token);
       this.toastr.success("Login successfully.", "SUCCESS");
       this.router.navigate(["/"]);
-    }, (err) => {
-      console.log(err);
-      this.toastr.error(err.error.message);
+
     });
   }
 }

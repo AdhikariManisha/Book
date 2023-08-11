@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Book.Shared.Exceptions;
 public class ValidationException : Exception 
 {
     public ValidationException() { 
     }
-    public ValidationException(string message) : base(message) { 
+    public ValidationException(string message, List<ValidationResult> validationErrors) : base(message) {
+        ValidationErrors = validationErrors;
     }
+
+    public List<ValidationResult> ValidationErrors { get; }
 }

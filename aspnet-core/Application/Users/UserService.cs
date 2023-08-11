@@ -3,6 +3,7 @@ using Book.Application.Contracts.Repositories;
 using Book.Application.Contracts.Users;
 using Book.Domain.Entities.Identity;
 using Book.Shared.Constants;
+using Book.Shared.Exceptions;
 using Book.Shared.Options;
 using Dapper;
 using Microsoft.AspNetCore.Identity;
@@ -112,14 +113,20 @@ public class UserService : IUserService
             var user = await _userManager.FindByNameAsync(dto.UserName);
             if (user == null)
             {
-                throw new Exception("Invalid Username/Password");
+                var msg = "Invalid Username/Password";
+                throw new ValidationException(msg, new List<System.ComponentModel.DataAnnotations.ValidationResult> { 
+                    new System.ComponentModel.DataAnnotations.ValidationResult(msg, new []{ "username", "password"})
+                });
             }
 
             bool isValidPassword = await _userManager.CheckPasswordAsync(user, dto.Password);
 
             if (!isValidPassword)
             {
-                throw new Exception("Invalid Username/Password.");
+                var msg = "Invalid Username/Password";
+                throw new ValidationException(msg, new List<System.ComponentModel.DataAnnotations.ValidationResult> {
+                    new System.ComponentModel.DataAnnotations.ValidationResult(msg, new []{ "username", "password"}),
+                });
             }
             var userClaims = await _userManager.GetClaimsAsync(user);
             var authClaims = new List<Claim> {

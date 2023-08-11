@@ -1,22 +1,18 @@
 ﻿using AutoMapper;
 using Book.Application.Contracts.Books;
 using Book.Application.Contracts.Repositories;
-using Book.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Book.Application.Contracts.Services;
-using Microsoft.Extensions.Configuration;
-using System.Data.SqlClient;
-using Book.Shared.Exceptions;
-using Microsoft.Extensions.Caching.Distributed;
+using Book.Domain.Entities;
 using Book.Shared.Constants;
-using System.Text.Json;
-using Microsoft.Extensions.Options;
 using Book.Shared.Options;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using System.ComponentModel.DataAnnotations;
+using System.Data.SqlClient;
+using System.Text;
+using System.Text.Json;
 
 namespace Book.Application.Books;
 public class BookService : IBookService
